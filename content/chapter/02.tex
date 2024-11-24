@@ -62,9 +62,91 @@ Dieses Wissen, was als nächstes getan werden kann, wird von Gobet und Jansen un
 Das Lernen von Eröffnungen ist sehr zeitaufwendig. Es wird vermutet, dass sieben bis 10 Sekunden benötigt werden um einen Chunk im Langzeitgedächtnis zu lernen. Außerdem wird es passieren, dass man Dinge wieder vergisst. Deshalb wird empfohlen sich auf wenige Eröffnungen zu konzentrieren. Für diese Eröffnungen kann man dann die häufigen Variationen und Positionen lernen. Man sollte so viele Variationen lernen, dass man auf die typischen Züge des Gegners reagieren kann. Indem man die Anzahl der Eröffnungen limitiert, erhöht man die Wahrscheinlichkeit, dass gelernten Chunks und Templates in einem richtigen Spiel begegnet wird. Beim Erlernen von Eröffnungen ist es außerdem wichtig eine Balance zwischen Auswendiglernen und Verständnis zu finden. Um sich die Abfolge der Züge zu merken muss man selbstverständlich viel Auswendiglernen, allerdings ist das Verständnis der Hauptideen nützlich um auch in unbekannten Situationen sinnvolle Züge zu finden. Dazu kommt, dass das Herausfiltern von Hauptideen, wie in \autoref{gedächtnis} beschrieben auch eine Lerntechnik ist, die beim Übertragen von Inhalten in das Langzeitgedächtnis helfen kann. Man sollte die Eröffnungen auch aus unterschiedlichen Perspektiven betrachten und Verknüpfungen zu Mittelspielen und Endspielen herstellen. Das soll die Erstellung von Templates beschleunigen. Ein zentraler Ort um die Eröffnungen nachzuschauen ist auch sinnvoll. Damit kann man sein Wissen einfach erneuern und verhindert, dass die Erinnerungen Verblassen oder sich verfälschen, wie in \autoref{gedächtnis} beschrieben.
 \cite{gobet_training_2006}
 
-Für eine Schachanwendung bedeutet das, dass man einen Spieler dazu ermutigen sollte eine Eröffnung und ihre Variationen im Detail zu erlernen. Man sollte die Spieler auch dazu bringen die Eröffnungen oft zu betrachten. Hier kann die Schachanwendung selbst der zentrale Ort werden um Eröffnungen nachzuschauen und seine Erinnerung aufzufrischen. Um die Verknüpfungen zwischen Eröffungen und Mittelspielen herzustellen kann man dem Spieler die Möglichkeit geben, von einer bestimmten Eröffnung als Startpunkt gegen einen Computergegner zu spielen. Für die Verknüpfung von Eröffnungen und Endspielen kann die von Gobet und Jansen in \cite{gobet_training_2006} vorgeschlagene Dekompositionsmethode verwendet werden. Hierbei werden nach der Eröffnug fast alle Figuren außer den Bauern und Königen vom Spielfeld entfernt. Dadurch bekommt man ein besseres Gefühlt dafür, welche Seite eine bessere Position hat. Man nach der Dekomposition den Spieler auch von dieser Position aus gegen einen Computer spielen lassen. Das Verstehen der Hauptideen von Eröffnungen kann erreicht werden durch beschreibende Infotexte. Auf diese Weise werden alle zuvor beschriebenen Bereiche abgedeckt. 
+Für eine Schachanwendung bedeutet das, dass man einen Spieler dazu ermutigen sollte eine Eröffnung und ihre Variationen im Detail zu erlernen. Man sollte die Spieler auch dazu bringen die Eröffnungen oft zu betrachten. Hier kann die Schachanwendung selbst der zentrale Ort werden um Eröffnungen nachzuschauen und seine Erinnerung aufzufrischen. Um die Verknüpfungen zwischen Eröffnungen und Mittelspielen herzustellen kann man dem Spieler die Möglichkeit geben, von einer bestimmten Eröffnung als Startpunkt gegen einen Computergegner zu spielen. Für die Verknüpfung von Eröffnungen und Endspielen kann die von Gobet und Jansen in \cite{gobet_training_2006} vorgeschlagene Dekompositionsmethode verwendet werden. Hierbei werden nach der Eröffnug fast alle Figuren außer den Bauern und Königen vom Spielfeld entfernt. Dadurch bekommt man ein besseres Gefühlt dafür, welche Seite eine bessere Position hat. Man nach der Dekomposition den Spieler auch von dieser Position aus gegen einen Computer spielen lassen. Das Verstehen der Hauptideen von Eröffnungen kann erreicht werden durch beschreibende Infotexte. Auf diese Weise werden alle zuvor beschriebenen Bereiche abgedeckt. 
 
 Auch Gobet und Jansen sehen das Potential für computergestütztes Lernen. Sie erwähnen die Nützlichkeit von Spieldatenbanken, Computergegnern und Analysen. Sie beschreiben auch, dass zukünftige Computerprogramme noch weitergehen können, indem sie wie ein Trainer personalisiert Übungsmaterial heraussuchen basierend auf den Stärken und Schwächen des Spielers.
 \cite{gobet_training_2006} 
 
-Gusev verwendet auch Computer um auf Schacheröffnungen vorzubereiten. In \cite{gusev_using_2021} zählt er verschiedene Softwareprodukte auf, die beim Erlernen von Schacheröffnungen helfen können. Darunter sind Schachengines, Spieldatenbanken, Cloud Services und Puzzles. Er präsentiert eine computerbasierte Herangehensweise um Eröffnungen zu trainieren. Dafür hat er mithilfe von Schachengines, Spieldatenbanken und einem Cloud Service beliebte Eröffnungsvarianten identifiziert und sortiert. Mögliche Fortführungen wurden durch eine Chessengine mit Eröffnungsbuch herausgefunden. Das Resultat war ein nützliches Werkzeug um Studenten Eröffnungen zu zeigen.
+Gusev verwendet auch Computer um auf Schacheröffnungen vorzubereiten. In \cite{gusev_using_2021} zählt er verschiedene Softwareprodukte auf, die beim Erlernen von Schacheröffnungen helfen können. Darunter sind Schachengines, Spieldatenbanken, Cloud Services und Puzzles. Er präsentiert eine computerbasierte Herangehensweise um Eröffnungen zu trainieren. Dafür hat er mithilfe von Schachengines, Spieldatenbanken und einem Cloud Service beliebte Eröffnungsvarianten identifiziert und sortiert. Mögliche Fortführungen wurden durch eine Schachengine mit Eröffnungsbuch herausgefunden. Das Resultat war ein nützliches Werkzeug um Studenten Eröffnungen zu zeigen.
+
+\section{Funktionsweise von Schachengines}
+Seit langer Zeit wird die Fähigkeit Schach zu spielen mit Intelligenz verbunden.
+Daher gab es auch großes Interesse daran Computern das Spielen von Schach beizubringen.
+Es wurden Preise ausgeschrieben für die Programme, die als erstes eine bestimmte Wertung erreichen oder den Weltmeister besiegen. Das erste Mal, dass ein Computer einen Weltmeister besiegte war im Jahr 1997. Das von IBM entwickelte Programm namens \enquote{Deep Blue} besiegte den aktuellen Weltmeister Garry Kasparov. Seitdem ist die Lücke zwischen Menschen und Computern immer größer geworden und heutzutage kann kein Mensch mehr gegen die besten Schachcomputer gewinnen.
+\cite{vjekoslav_nemec_history_2019}
+
+Computerprogramme, die Schach spielen werden typischerweise Schachengines genannt. Es gibt Formen von Schachengines. Die eine nutzt den Minimax"=Algorithmus in Verbindung mit Alpha-Beta-Pruning. Das ist auch die Art von Schachengines, die zuerst entwickelt wurden. Eine weitere Form wurde in den letzten Jahren entwickelt. Diese arbeiten mit reinem Reinforcement Learning und erlernen das Spiel, indem sie zahlreiche Spiele gegen sich selbst spielen. In den Folgenden zwei Kapiteln werden beide Herangehensweisen näher erläutert.
+
+\subsection{Alpha-Beta-Pruning}
+Der Alpha-Beta-Pruning Algorithmus kann genutzt werden um ein Spiel mit zwei Spielern, die gegensätzliche Ziele verfolgen, zu spielen. Der Algorithmus baut auf dem Minimax Algorithmus auf und optimiert diesen durch Kürzen (Pruning) des Suchbaums.
+
+Für den Minimax Algorithmus wird ein Spiel anhand von Positionen $p$ definiert und anhand von Regeln, wie von einer Position in eine andere Übergegangen werden kann. Wenn es keine weiteren legalen Züge gibt, dann ist eine Terminalposition erreicht. Diese Struktur kann als sogenannter Spielbaum dargestellt werden. Die Positionen bilden die Knoten und wenn es ein Übergang von einer Position in eine andere existiert, wird eine Kante eingezeichnet. Falls eine Position schon einmal erreicht wurde darf allerdings keine Kante hinzugefügt werden um Zyklen zu verhindern. Bei diesem Baum ist $h$ die Tiefe des Baumes und $d$ ist die Anzahl an Verzweigungen an einem Knoten. Die Terminalpositionen bilden die Blattknoten.
+
+Jeder Terminalposition wird ein Wert zugewiesen durch die Evaluationsfunktion $f(p)$. Für einen Spieler ist der Wert des Spiels $f(p)$ und für den anderen der Wert $-f(p)$. Beide Spieler möchten jeweils ihren Wert maximieren. Alternativ kann man auch formulieren, dass ein Spieler den Wert von $f(p)$ maximieren will und der Gegner will ihn minimieren.
+Beide Herangehensweisen sind equivalent. Wenn $p$ eine Position ist, bei der es es $d$ legale Züge $p_1,\ldots,p_d$ mit $d > 1$ gibt, dann ist es die Aufgabe des Algorithmus den besten Zug auszuwählen. Der beste Zug ist der Zug, bei dem beste Wert für den Spieler am Zug erreicht wird. Es wird davon ausgegangen, dass der Gegner auch jeweils die Züge auswählt, die für ihn zu dem besten Wert führen. Es sei $F(p)$ der größtmögliche Wert, der von Position $p$ aus erreichbar ist gegen einen optimal spielenden Gegner. Die Funktion $F(p)$ wird definiert durch:
+\begin{equation}
+    F(p) = 
+    \begin{cases}
+        f(p) & \text{für } d = 0 \\
+        max(-F(p_1),\ldots,-F(p_d)) & \text{für } d > 0
+    \end{cases}
+\end{equation}
+
+Mit Pseudocode kann diese Funktion folgendermaßen abgebildet werden:
+\begin{lstlisting}
+function F(p: Position): Int {
+    ps = findSuccessors(p)
+    if (d == 0) {
+        return f(p)
+    }
+    m = -infinity
+    for (pi in ps) {
+        t = -F(pi)
+        m = max(t, m)
+    }
+    return m
+}
+\end{lstlisting}
+
+Dieser Algorithmus durchsucht alle Möglichen Fortsetzungen von $p$ und findet den besten Zug mit dem besten Wert. 
+\cite{knuth_analysis_1975}
+
+Es ist allerdings nicht immer notwendig alle Fortsetzungen zu zu überprüfen. Oft kann erkannt werden, dass eine bestimmte Zugfolge keinen besseren Wert mehr erreichen kann und daher ignoriert werden kann.
+Wenn man zum Beispiel eine Zugfolge herausgefunden hat, die mit dem Wert 3 bewertet wird und man über eine andere Zugfolge sagen kann, dass diese nicht besser als 3 wird, muss man diese nicht weiter nachverfolgen. Wenn also $-F(p_1) = 3$ ist, dann ist $F(p) \geq 3$ und jeder Pfad mit $-F(p_i) \leq 3$ ist kann ignoriert werden, weil der Gegner den Zug so wählen wird,  dass entweder derselbe Wert oder ein für uns kleinerer Wert erzielt wird. Indem man den aktuell höchsten Wert zwischenspeichert, ist es möglich bestimmte Suchzweige auszulassen.
+\cite{knuth_analysis_1975}
+
+\missingfigure{Beispiel}
+
+Dieses Vorgehen kann weiter verbessert werden indem man den höchsten und den kleinsten Wert zwischenspeichert. Dieses Vorgehen wird Alpha-Beta-Pruning genannt. Knuth und Moore definieren die Funktion folgendermaßen:
+
+\begin{equation}
+    \begin{array}{ll}
+        F2(p, \alpha, \beta) \leq \alpha & \text{für }F(p) \leq \alpha \\
+        F2(p, \alpha, \beta) = F(p) & \text{für }\alpha < F(p) < \beta \\
+        F2(p, \alpha, \beta) \geq \beta & \text{für }F(p) \geq \beta
+    \end{array}
+\end{equation}
+
+In Pseudocode kann der Algorithmus folgendermaßen umgesetzt werden:
+\begin{lstlisting}
+function F2(p: Position, alpha: Int, beta: Int): Int {
+    ps = findSuccessors(p)
+    if (d == 0) {
+        return f(p)
+    }
+    m = alpha
+    for (pi in ps) {
+        t = -F2(pi, -beta, -m)
+        m = max(t, m)
+        if (m >= beta) break
+    }
+    return m
+}
+\end{lstlisting}
+\cite{knuth_analysis_1975}
+
+\missingfigure{Beispiel}
+
+Für diesen Algorithmus können auch weitere Verbesserungen vorgenommen werden. Einen großen Faktor spielt die Reihenfolge, in der die Züge untersucht werden. Bei einer optimalen Reihenfolge muss der Alpha-Beta-Algorithmus $d^{\lceil h/2 \rceil} + d^{\lfloor h/2 \rfloor} - 1$ Terminalpositionen bewerten. \cite{knuth_analysis_1975} Das ist dann der Fall, wenn beim Durchsuchen des Baumes immer der richtige Zug ausgewählt wird, sodass er maximal gekürzt werden kann. Der Algorithmus kann dahingehend verbessert werden, dass Züge, die mit hoher Wahrscheinlichkeit einen Vorteil bringen zuerst betrachtet werden. Im Schach können zum Beispiel Züge in welchen eine Figur geschlagen wird zuerst betrachtet werden, da diese oft einen Vorteil bringen. Andere Züge, wie zum Beispiel Damenopfer können später betrachtet werden. Eine optimale Reihenfolge kann man dadurch jedoch nicht garantieren. Wie in der Gleichung zu sehen ist steigt die Anzahl der zu besuchenden Knoten selbst im Optimalfall exponentiell. Es kann also nur eine bestimmte Anzahl an Zügen in die Zukunft geschaut werden. Für viele Spiele, darunter auch Schach ist die Anzahl an Zügen in einem Spiel deutlich zu hoch. \todo{wie hoch} Aus diesem Grund wird eine bestimmte Suchtiefe festgelegt, ab der die Positionen als Terminalpositionen behandelt werden.\cite{knuth_analysis_1975} Es muss also für diese Position auch eine Evaluationsfunktion $f$ existieren. In der naivsten Form kann dafür die Anzahl der Figuren der Spieler genommen werden. In komplexeren Schachengines werden auch Neurale Netze verwendet um Positionen zu bewerten.
+
+
