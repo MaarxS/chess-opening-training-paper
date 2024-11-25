@@ -164,3 +164,6 @@ Bei AlphaZero wird \ac{MCTS} mit einem tiefen Neuralen Netz $f_\theta$ mit den P
 
 Der beschriebene Algorithmus wurde jeweils für Schach, Shogi und Go trainiert. In Schach und Shogi spielte AlphaZero nach weniger als einem Tag Training besser als die bis dahin führenden Programme. Im Vergleich zu Alpha-Beta-Pruning Algorithmen, wie zum Beispiel Stockfish durchsucht AlphaZero deutlich weniger Pfade pro Sekunde. Das ganze wird dadurch kompensiert, dass AlphaZero bei der Auswahl der zu untersuchenden Pfade selektiver vorgeht. Es wurde auch gezeigt, dass AlphaZero effizienter skaliert mit mehr Bedenkzeit. Des weiteren werden Fehler in der Schätzung von Positionen durch \ac{MCTS} geschwächt, während sie bei Alpha-Beta-Pruning Algorithmen bis zur Wurzel wandern.
 \cite{silver_mastering_2017}
+
+\section{Schnittstellen}
+Damit Schachengines in andere Programme eingebunden werden können sind Schnittstellen notwendig. In den folgenden Kapiteln wird beschrieben, wie die Schnittstelle zu einer Schachengine meistens gestaltet wird und wie Schnittstellen zwischen einer Weboberfläche und dem Backend gebildet werden können.
