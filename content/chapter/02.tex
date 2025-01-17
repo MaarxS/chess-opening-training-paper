@@ -173,7 +173,9 @@ Der beschriebene Algorithmus wurde jeweils für Schach, Shogi und Go trainiert. 
 
 \section{Schnittstellen}
 Damit Schachengines in andere Programme eingebunden werden können sind Schnittstellen notwendig.
-Das zu entwickelnde Programm muss also eine Schnittstelle ansteuern können, die die Schachengine unterstützt. Zusätzlich wird eine Schnittstelle benötigt um mit einer Weboberfläche zu kommunizieren un dem Nutzer eine Benutzeroberfläche bereitzustellen. 
+Das zu entwickelnde Programm soll ein Backend für eine Schachlernanwendung im Web bilden. Dafür muss es zum einen eine Schachengine einbinden und ihre Schnittstelle ansteuern und zum anderen Schnittstellen, für eine Weboberfläche zur Verfügung stellen.
+%Das zu entwickelnde Programm muss also eine Schnittstelle ansteuern können, die die Schachengine unterstützt. Zusätzlich wird eine Schnittstelle benötigt um mit einer Weboberfläche zu kommunizieren un dem Nutzer eine Benutzeroberfläche bereitzustellen. 
+Schnittstellen zwischen Programmen werden \ac{API} genannt. Sie erlauben es unterschiedlichen Programmen miteinander zu kommunizieren und interagieren. Die Programme können dabei mit unterschiedlichen Technologien erstellt word sein und auch auf verschiedenen Rechnern ausgeführt werden, solange sie sich durch eine gemeinsame \ac{API} verständigen können.
 In den folgenden Kapiteln wird beschrieben, wie die Schnittstelle zu einer Schachengine meistens gestaltet wird und wie Schnittstellen zwischen einer Weboberfläche und dem Backend gebildet werden können.
 
 \subsection{Schachengine Schnittstellen}
@@ -195,3 +197,27 @@ Die Kommunikation findet bei diesem Protokoll über die Standardeingabe und Stan
     \item Wenn die Berechnung beendet ist oder durch \lstinline{stop} abgebrochen wurde, sendet die Engine den besten herausgefundenen Zug mit dem Kommando \lstinline{bestmove}.
 \end{enumerate}
 \cite{stefan_meyer-kahlen_universal_2025}
+
+\subsection{Web-Schnittstellen}
+Die Benutzerschnittstelle für dieses Projekt soll als Weboberfläche realisiert werden. Dafür wird es in zwei Bestandteile aufgeteilt, das Backend und das Frontend. Damit diese Bestandteile miteinander kommunizieren können, ist es notwendig eine \ac{API} zur Kommunikation zu entwickeln. 
+
+Für diesen Anwendungsfall werden häufig \ac{REST}ful APIs erstellt. Diese Art von APIs verwendet HTTP um zwei Systeme miteinader kommunizieren zu lassen. Damit eine API als \ac{REST}ful bezeichnet werden kann müssen einige Kriterien erfüllt sein.
+\cite{de_api_2017}
+
+Eine REST API hat eine einheitliche Schnittstelle. Das hilft dabei die Kommunikation zwischen den Komponenten zu definieren. Es entkoppelt die Kommunikation von der Architektur. Jede Ressource hat eine eindeutige URI über die man auf sie zugreifen kann. Das Frontend muss nicht wissen, wie die Daten abgespeichert sind. Sie werden mit einem portablen Format, wie XML oder JSON verschickt.
+\cite{de_api_2017}
+
+REST APIs sind Client-Server-Architekturen. Das hat den Vorteil, dass der Client und Server gegenseitig nichts über ihre Technologien und Implementierungen wissen müssen. Bei diesem Projekt werden Client und Server separat voneinander entwickelt. Das ist möglich durch die Client-Server-Architektur
+\cite{de_api_2017}
+
+Ein Kernaspekt von REST APIs ist, dass sie Zustandslos sind. Der Server muss sich den Zustand des Clients nicht merken. Stattdessen liegt es in der Verantwortung des Clients, bei jeder Anfrage den aktuellen Kontext mitzusenden. Das ist auch der Fall bei mehrteiligen Anfragen. Das vereinfacht die Aufgaben des Servers und Load Balancer sind auch einfacher zu implementieren.
+\cite{de_api_2017}
+
+Das Caching ist auch ein Teil von REST APIs. Der Server kann entscheiden, ob eine Anfrage gecacht werden kann oder nicht. Der Client kann dann entscheiden, ob er die gecachte Antwort verwenden will. Das ermöglicht schnellere Antwortzeiten und kürzere Latenzen.
+\cite{de_api_2017}
+
+Bei REST APIs ist es möglich Zwischenkomponenten zwischen Client und Server zu platzieren. Das kann die Sicherheit des Systems erhöhen. Auf diese Weise kann auch Caching, Rate Limiting und Load Balancing implementiert werden.
+\cite{de_api_2017}
+
+Eine optionale Anforderung an REST APIs ist code-on-demand. Das beschreibt das Vorgehen, dass der Webserver ausführbare Programme an den Client schickt.
+\cite{de_api_2017}
