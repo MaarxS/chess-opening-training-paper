@@ -172,4 +172,26 @@ Der beschriebene Algorithmus wurde jeweils für Schach, Shogi und Go trainiert. 
 \cite{silver_mastering_2017}
 
 \section{Schnittstellen}
-Damit Schachengines in andere Programme eingebunden werden können sind Schnittstellen notwendig. In den folgenden Kapiteln wird beschrieben, wie die Schnittstelle zu einer Schachengine meistens gestaltet wird und wie Schnittstellen zwischen einer Weboberfläche und dem Backend gebildet werden können.
+Damit Schachengines in andere Programme eingebunden werden können sind Schnittstellen notwendig.
+Das zu entwickelnde Programm muss also eine Schnittstelle ansteuern können, die die Schachengine unterstützt. Zusätzlich wird eine Schnittstelle benötigt um mit einer Weboberfläche zu kommunizieren un dem Nutzer eine Benutzeroberfläche bereitzustellen. 
+In den folgenden Kapiteln wird beschrieben, wie die Schnittstelle zu einer Schachengine meistens gestaltet wird und wie Schnittstellen zwischen einer Weboberfläche und dem Backend gebildet werden können.
+
+\subsection{Schachengine Schnittstellen}
+Heutzutage unterstützen die meisten Schachprogramme das \ac{UCI}. Es hat fast vollständig das ältere Protokoll XBoard ersetzt. Der primäre Zweck der Software ist es eine Engine mit einer GUI zu verbinden. Die Aufgabe der GUI ist es dabei nicht nur eine Benutzeroberfläche dazustellen, sondern auch sich den Zustand zu merken. Das ermöglicht es, dass die Engine zustandslos ist und reduziert somit ihre Komplexität. Die GUI kann auch Züge von einem Eröffnungsbuch oder einer Endspieltabelle auswählen. Ein Format für die Eröffnungsbücher wird nicht vorgeschrieben. Sie können je nach GUI Programm variieren. Diese Aufgabe muss nicht in der Engine erledigt werden.
+\cite{wikpedia_foundation_inc_universal_2024}
+
+Die Kommunikation findet bei diesem Protokoll über die Standardeingabe und Standardausgabe der Konsole statt. In dem Protokoll sind einige Kommandos definiert, über die eine GUI Daten abfragen und setzen kann und Aktionen starten. ein typischer Ablauf kann folgendermaßen aussehen:
+\begin{enumerate}
+    \item Die GUI schickt zur Initialisierung das Kommando \lstinline{uci}.
+    \item Die Engine antwortet mit ihrem Namen, Autor und den Optionen, die eingestellt werden können.
+    \item Wenn alle Informationen gesendet wurden schickt sie \lstinline{uciok}
+    \item Jetzt kann die GUI mit dem Kommando \lstinline{setoption} Optionen setzen.
+    \item Mit dem Kommando \lstinline{isready} kann überprüft werden, ob die Engine bereit ist für den nächsten Schritt.
+    \item \lstinline{ucinewgame} startet ein neues Spiel.
+    \item Die Position wird mit dem Kommando Position gesetzt, z. B. \lstinline{position startpos moves e2e4 e7e5}. Statt \lstinline{startpos} kann auch ein FEN-String übergeben werden. Das ist eine String Darstellung der aktuellen Position. Nach \lstinline{moves} können die gespielten Züge in algebraischer Notation dargestellt werden. Dabei beschreiben die ersten zwei Zeichen die ursprüngliche Position der Figur und letzten zwei den Zielort. e2e4 bewegt also eine Figur von der Position e2 zur Position e4. Da die Position davor die Startposition war, muss es ein Bauer gewesen sein.
+    \item Mit dem Kommando \lstinline{go} startet die Engine die Berechnung. Diesem Kommando können auch Begrenzungen mitgegeben werden, wie zum Beispiel die maximale Tiefe oder maximale Anzahl an Knoten, die untersucht werden sollen.
+    \item Während der Berechnung gibt die Engine kontinuierlich Zwischeninformationen über die aktuelle Tiefe untersuchten Züge und weitere Parameter.
+    \item Die GUI kann die Berechnung jederzeit beenden mit dem Kommando \lstinline{stop}.
+    \item Wenn die Berechnung beendet ist oder durch \lstinline{stop} abgebrochen wurde, sendet die Engine den besten herausgefundenen Zug mit dem Kommando \lstinline{bestmove}.
+\end{enumerate}
+\cite{stefan_meyer-kahlen_universal_2025}
