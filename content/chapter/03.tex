@@ -1,0 +1,24 @@
+%!TEX root = ../../main.tex
+
+\chapter{Marktanalyse}
+Wie bereits erwähnt gibt es viele Programme, die eine lernende Person beim Erlernen von Schacheröffnungen unterstützen kann. In diesem Kapitel wird zuerst betrachtet, welche Lernprogramme es gibt und ob es in dem aktuellen Angebot Defizite gibt, die durch unser Projekt ausgeglichen werden können. Anschließend findet ein Vergleich von Schachengines und von Datenbanken unter der Betrachtung, welche am besten in dieses Projekt eingebunden werden können.
+
+
+\section{Lernprogramme}
+
+
+\section{Schachengines}
+Mittlerweile existieren sehr viele Schachengines, die sich leicht in ihren Algorithmen unterscheiden. Einen Startpunkt für den Vergleich der Engines bietet der \ac{TCEC}. In diesem Turnier treten unterschiedliche Schachengines gegeneinander an in mehreren Spielen. Der Sieger einer Saison wird  \ac{TCEC} Champion. In der Vergangenheit waren die Engines Stockfish, LCZero, Komodo und Houdini Champions.\cite{tcec_chessdom_tcec-chess_2025}
+
+LCZero ist ausgeschrieben Leela Chess Zero und wird auch mit dem Namen lc0 bezeichnet. Diese Engine verwendet den gleichen Ansatz, wie AlphaZero mit ein paar Anpassungen. Sie arbeitet also mit einem Neuralen Netzwerk um die besten Züge herauszufinden. Im Gegensatz zu AlphaZero kann jeder LCZero mit einem vortrainierten Neuralen Netz herunterladen und über \ac{UCI} verwenden.
+\cite{noauthor_neural_2020}
+
+Stockfish verwendet Alpha-Beta-Pruning um die besten Züge herauszufinden. Früher wurden die Schachpositionen durch eine handgeschriebene Evaluationsfunktion bewertet. Mittlerweile wurde diese Funktion durch ein \ac{NNUE} ersetzt, was Stockfish deutlich verbesserte. Die Engine wird oft als die stärkste Schachengine angesehen. Sie hat auch die meisten \ac{TCEC} gewonnen. Die letzten sechs Saisons blieb sie ungeschlagen. Stockfish ist auch kostenlos verfügbar und kann über \ac{UCI} verwendet werden.
+\cite{wikpedia_foundation_inc_stockfish_2025}
+
+Komodo gewann vor ein paar Jahren einige \ac{TCEC}. Komodo wird auch von Chess.com verwendet für Computergegner mit unterschiedlicher Stärke. Seit Version 12 ist auch eine \ac{MCTS}-Engine integriert. Die neuesten Versionen heißen Komodo Dragon und verwenden auch ein \ac{NNUE}. Die Engine wird auch über \ac{UCI} angesteuert. Die neuesten Versionen sind allerdings kostenpflichtig.
+\cite{wikpedia_foundation_inc_komodo_2024}
+
+Für dieses Projekt wird die Schachengine Stockfish verwendet. Sie ist die aktuell stärkste Schachengine und auch kostenlos. Sie kann von der Stärke auch angepasst werden und über \ac{UCI} angesteuert werden.
+
+\section{Datenbanken}
