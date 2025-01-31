@@ -8,17 +8,41 @@ Wie bereits erwähnt gibt es viele Programme, die eine lernende Person beim Erle
 
 
 \section{Schachengines}
-Mittlerweile existieren sehr viele Schachengines, die sich leicht in ihren Algorithmen unterscheiden. Einen Startpunkt für den Vergleich der Engines bietet der \ac{TCEC}. In diesem Turnier treten unterschiedliche Schachengines gegeneinander an in mehreren Spielen. Der Sieger einer Saison wird  \ac{TCEC} Champion. In der Vergangenheit waren die Engines Stockfish, LCZero, Komodo und Houdini Champions.\cite{tcec_chessdom_tcec-chess_2025}
+Mittlerweile existieren sehr viele Schachengines, die sich leicht in ihren Algorithmen unterscheiden. Einen Startpunkt für den Vergleich der Engines bietet der \ac{TCEC}. In diesem Turnier treten unterschiedliche Schachengines gegeneinander an in mehreren Spielen. Der Sieger einer Saison wird  \ac{TCEC} Champion. In der Vergangenheit waren die Engines Stockfish, LCZero, Komodo und Houdini Champions. \cite{tcec_chessdom_tcec-chess_2025}
+
+Ein Team hat auch Statistiken angelegt über die meisten Schachengines. Das Ergebnis ist die \acf{CCRL}. \cite{ccrl_team_ccrl_2025} \autoref{tab:engines} zeigt eine Übersicht von vier Engines, die genauer betrachtet werden. Es wird ihre Elo-Bewertung laut \ac{CCRL} und die Anzahl ihrer \ac{TCEC}-Siege aufgelistet.
+
+\begin{table}
+    \centering
+    \begin{tabular}{|c|l|c|c|c|}
+        \hline
+        Engine & Algorithmus & Elo & Siege & kostenfrei \\
+        \hline
+        Stockfish & Alpha-Beta + \acs{NNUE} & 3642 & 13 & ja \\
+        \hline
+        Komodo & \acs{MCTS} + \acs{NNUE} & 3626 & 4 & nein \\
+        \hline
+        LCZero & \acs{MCTS} & 3443 & 2 & ja \\
+        \hline
+        AlphaZero & \acs{MCTS} & - & - & nein \\
+        \hline
+    \end{tabular}
+    \caption{Schachengines}
+    \label{tab:engines}
+\end{table}
+
+AlphaZero war ein Forschungsprojekt, dass in einem vorherigen Kapitel näher beschrieben wurde. Die Engine wurde hauptsächlich für Forschungszwecke entwickelt und ist nicht frei zur Verwendung verfügbar. Es haben sich allerdings einige andere Programmierer an den Forschungsergebnissen der Engine orientiert und ähnliche Engines entwickelt.
 
 LCZero ist ausgeschrieben Leela Chess Zero und wird auch mit dem Namen lc0 bezeichnet. Diese Engine verwendet den gleichen Ansatz, wie AlphaZero mit ein paar Anpassungen. Sie arbeitet also mit einem Neuralen Netzwerk um die besten Züge herauszufinden. Im Gegensatz zu AlphaZero kann jeder LCZero mit einem vortrainierten Neuralen Netz herunterladen und über \ac{UCI} verwenden.
 \cite{noauthor_neural_2020}
 
-Stockfish verwendet Alpha-Beta-Pruning um die besten Züge herauszufinden. Früher wurden die Schachpositionen durch eine handgeschriebene Evaluationsfunktion bewertet. Mittlerweile wurde diese Funktion durch ein \ac{NNUE} ersetzt, was Stockfish deutlich verbesserte. Die Engine wird oft als die stärkste Schachengine angesehen. Sie hat auch die meisten \ac{TCEC} gewonnen. Die letzten sechs Saisons blieb sie ungeschlagen. Stockfish ist auch kostenlos verfügbar und kann über \ac{UCI} verwendet werden.
-\cite{wikpedia_foundation_inc_stockfish_2025}
-
 Komodo gewann vor ein paar Jahren einige \ac{TCEC}. Komodo wird auch von Chess.com verwendet für Computergegner mit unterschiedlicher Stärke. Seit Version 12 ist auch eine \ac{MCTS}-Engine integriert. Die neuesten Versionen heißen Komodo Dragon und verwenden auch ein \ac{NNUE}. Die Engine wird auch über \ac{UCI} angesteuert. Die neuesten Versionen sind allerdings kostenpflichtig.
 \cite{wikpedia_foundation_inc_komodo_2024}
 
-Für dieses Projekt wird die Schachengine Stockfish verwendet. Sie ist die aktuell stärkste Schachengine und auch kostenlos. Sie kann von der Stärke auch angepasst werden und über \ac{UCI} angesteuert werden.
+Stockfish verwendet Alpha-Beta-Pruning um die besten Züge herauszufinden. Früher wurden die Schachpositionen durch eine handgeschriebene Evaluationsfunktion bewertet. Mittlerweile wurde diese Funktion durch ein \ac{NNUE} ersetzt, was Stockfish deutlich verbesserte. Die Engine wird oft als die stärkste Schachengine angesehen. Sie hat auch die meisten \ac{TCEC} gewonnen. Die letzten sechs Saisons blieb sie ungeschlagen. Stockfish ist auch kostenlos verfügbar und kann über \ac{UCI} verwendet werden.
+\cite{wikpedia_foundation_inc_stockfish_2025}
+
+Für dieses Projekt wird die Schachengine Stockfish verwendet. Sie ist die aktuell stärkste Schachengine und auch kostenlos. Sie kann von der Stärke auch angepasst werden und über \ac{UCI} angesteuert werden. Das macht sie geeignet um sie in ein anderes Programm einzubinden.
 
 \section{Datenbanken}
+Damit die Eröffnungen nicht von Hand in das Programm eingepflegt werden müssen sind Eröffnungsdatenbanken notwendig. Es existieren viele Seiten, um Eröffnungsdatenbanken in einer Weboberfläche zu betrachten. Einige auch mit kostenpflichtigen Abonnements. Für unser Programm sollte die Datenbank allerdings kostenfrei verfügbar sein und in maschinenlesbarer Form. Auf einigen Seiten kann man vergangene Spiele im \ac{PGN}-Format herunterladen. Das ist ein Dateiformat, mit dem der Verlauf eines Spiels notiert werden kann. Allerdings bieten die meisten Seiten nur vollständige Spiele und keine Dateien speziell für Eröffnungen. So ist es schwierig die einzelnen Varianten zu identifizieren. Es existieren auch ein paar Dateisammlungen im JSON Format. Zum Beispiel wurde in dem GitHub Repository \href{https://github.com/hayatbiralem/eco.json}{hayatbiralem/eco.json} eine Ansammlung an Eröffnungen erstellt mit einer Vielzahl an unterschiedlichen Varianten und ihren Namen. Diese Sammlung könnte mit wenig Aufwand in das Projekt integriert werden.
