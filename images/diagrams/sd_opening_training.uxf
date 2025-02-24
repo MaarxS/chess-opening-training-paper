@@ -1,0 +1,24 @@
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLSequenceAllInOne</id><coordinates><x>10</x><y>5</y><w>630</w><h>790</h></coordinates><panel_attributes>title=Lernmodus
+obj=User~a ACTOR
+obj=Frontend~b
+obj=API~c    // create lifeline with identifier c
+
+a-&gt;b:Lernmodus auswählen; on=b
+b-&gt;&gt;&gt;c:GET /openings; on=c
+c.&gt;b: openingOverviews; off=c
+b.&gt;a: zeige Eröffnungsnamen; off=b
+
+a-&gt;b: wähle Eröffnung aus; on=b
+b-&gt;&gt;&gt;c: GET /openings/D20/ variants/next-moves; on=c
+c.&gt;b: OpeningMoves; off=c
+b.&gt;a: zeige Eröffnungszüge; off=b
+
+combinedFragment=loop~l1 a c   // fragment spanning from b to c
+b:[OpeningMoves != empty]     ;// description on line b
+a-&gt;b: wähle nächsten Zug; on=b
+b-&gt;&gt;&gt;c: GET /openings/D20/ variants/next-moves? played=d2d4...	; on=c
+c.&gt;b: OpeningMoves; off=c
+b.&gt;a: zeige Eröffnungszüge; off=b
+
+--      // end block
+</panel_attributes><additional_attributes></additional_attributes></element></diagram>
