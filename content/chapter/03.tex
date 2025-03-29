@@ -53,15 +53,41 @@ LCZero ist ausgeschrieben Leela Chess Zero und wird auch mit dem Namen lc0 bezei
 
 \subsection{Komodo}
 Komodo gewann vor ein paar Jahren einige \ac{TCEC}. Komodo wird auch von Chess.com verwendet für Computergegner mit unterschiedlicher Stärke. Seit Version 12 ist auch eine \ac{MCTS}-Engine integriert. Die neuesten Versionen heißen Komodo Dragon und verwenden auch ein \ac{NNUE}. Die Engine wird auch über \ac{UCI} angesteuert. Die neuesten Versionen sind allerdings kostenpflichtig.
-\cite{wikpedia_foundation_inc_komodo_2024}
+\cite{wikipedia_foundation_inc_komodo_2024}
 
 \subsection{Stockfish}
 Stockfish verwendet Alpha-Beta-Pruning um die besten Züge herauszufinden. Früher wurden die Schachpositionen durch eine handgeschriebene Evaluationsfunktion bewertet. Mittlerweile wurde diese Funktion durch ein \ac{NNUE} ersetzt, was Stockfish deutlich verbesserte. Die Engine wird oft als die stärkste Schachengine angesehen. Sie hat auch die meisten \ac{TCEC} gewonnen. Die letzten sechs Saisons blieb sie ungeschlagen. Stockfish ist auch kostenlos verfügbar und kann über \ac{UCI} verwendet werden.
-\cite{wikpedia_foundation_inc_stockfish_2025}
+\cite{wikipedia_foundation_inc_stockfish_2025}
 
 \subsection{Auswahl}
 Für dieses Projekt wird die Schachengine Stockfish verwendet. Sie ist die aktuell stärkste Schachengine und auch kostenlos. Sie kann von der Stärke auch angepasst werden und über \ac{UCI} angesteuert werden. Das macht sie geeignet um sie in ein anderes Programm einzubinden.
 
-\section{Datenbanken}
-Damit die Eröffnungen nicht von Hand in das Programm eingepflegt werden müssen sind Eröffnungsdatenbanken notwendig. Es existieren viele Seiten, um Eröffnungsdatenbanken in einer Weboberfläche zu betrachten. Einige auch mit kostenpflichtigen Abonnements. Für unser Programm sollte die Datenbank allerdings kostenfrei verfügbar sein und in maschinenlesbarer Form. Auf einigen Seiten kann man vergangene Spiele im \ac{PGN}-Format herunterladen. Das ist ein Dateiformat, mit dem der Verlauf eines Spiels notiert werden kann. Allerdings bieten die meisten Seiten nur vollständige Spiele und keine Dateien speziell für Eröffnungen. So ist es schwierig die einzelnen Varianten zu identifizieren. Es existieren auch ein paar Dateisammlungen im JSON Format. Zum Beispiel wurde in dem GitHub Repository \cite{omur_yanikoglu_ecojson_2025} eine Ansammlung an Eröffnungen erstellt mit einer Vielzahl an unterschiedlichen Varianten und ihren Namen. Diese Sammlung besteht wiederum aus mehreren anderen Sammlungen. Darunter ist auch \cite{lichessorg_chess-openings_2025}. Diese Sammlung könnte mit wenig Aufwand in das Projekt integriert werden.
-\todo{Online Datenbanken und Bücher ansprechen}
+\section{Eröffnungssammlungen}
+In diesem Kapitel wird beschrieben, welche Eröffnungssammlungen existieren und es wird bewertet, wie gut sie für eine Lernanwendung für Eröffnungen verwendet werden können.
+
+\subsection{Encyclopedia of Chess Openings}
+Die Encyclopedia of Chess Openings ist eine der bekanntesten Sammlungen von Schacheröffnungen. Sie wurde erstellt, um den aktuellen Stand der Eröffnungstheorie festzuhalten. Die Züge wurden aus Spielen von Schachmeistern genommen und durch die Editoren, von welchen die meisten Großmeister sind, wurden die
+Die Editoren, von denen die meisten Großmeister sind, wählten aus den Partien von Schachmeistern die Züge aus, die sie für am bedeutendsten hielten. Die Eröffnungen wurden in die fünf Kategorien A bis E aufgeteilt, für die jeweils ein Buch veröffentlicht wurde. Die Kategorien sind wiederum unterteilt in hundert nummerierte Unterkategorien. Die Kategorien und ihre Nummern werden auch ECO Codes genannt.
+\cite{wikipedia_foundation_inc_encyclopaedia_2024}
+\todo{mehrdeutigkeit von ECO Codes}
+
+Mit dieser Sammlung wären die wichtigsten Eröffnungen abgedeckt. Allerdings ist die Encyclopedia of Chess Openings in erster Linie eine Buchreihe, in der die Eröffnungen in Tabellenform dargestellt wird mit textuellen Beschreibungen in natürlicher Sprache. Um die Eröffnungen in einem Programm zu verwenden müssen sie allerdings in maschinenlesbarer Form vorliegen.
+
+\subsection{Eröffnungsdatenbanken}
+Eröffnungsdatenbanken werden auch Opening Explorer genannt. Sie besitzen Datensätze von vielen vergangenen Schachspielen. In der passenden Benutzeroberfläche kann man betrachten, welche Züge wie häufig in diesem Datensatz gespielt wurden und wie oft schwarz oder weiß gewonnen nach dieser Kombination gewonnen hat. 
+% ChessBase ist das bekannteste Beispiel für eine solche Datenbank. Die meisten Funktionen von ChessBase verlangen allerdings ein Abonnement. Andere Seiten, wie Chess.com und Lichess bieten einen Teil der Funktionen auch kostenlos an.
+
+Eröffnungsdatenbanken sind ein nützliches Werkzeug um sein Wissen über bekannte Eröffnungen zu vertiefen und zu erfahren, welche Varianten häufig gespielt werden. Sie sind allerdings nicht dafür gedacht neue Schacheröffnungen zu erlernen. Sie können auch nicht in ein anderes Programm eingebunden werden, da sie meist nur eine grafische Schnittstelle besitzen und keine \ac{API}.
+
+\subsection{Eröffnungsbücher für Computer}
+Die von Eröffnungsdatenbanken genutzten Datensätze werden als Eröffnungsbücher bezeichnet. Eröffnungsbücher werden auch oft von Schachengines genutzt. Das spart in Anfangszügen Rechenleistung und Zeit. Es gibt sie in Binär- und Textformaten. Die Binärformate sind häufig nicht vollständig dokumentiert, mit der Ausnahme von Polyglott. Die Textformate bestehen meist aus der \ac{PGN} Notation.
+Bei diesem Format werden die Züge in der verkürzten algebraischen Notation festgehalten. Die algebraische Notation ist die, die auch in Schachbüchern für Menschen genutzt werden.
+\cite{wikipedia_foundation_inc_chess_2025}
+
+Im Internet kann man auch einige kostenlose Eröffnungsbücher im Polyglott oder \ac{PGN}-Format finden. Diese haben nicht unbedingt den selben Umfang, wie in kostenpflichtigen Datenbanken, können aber dennoch verwendet werden um selber eine Eröffnungsdatenbank zu implementieren. Für ein Programm zum Erlernen von Schacheröffnungen ist es allerdings nicht notwendig mehrere Millionen von vergangenen Spielen zu speichern und zu analysieren. Eine Liste mit den häufigsten Eröffnungen und ihren Varianten wäre bereits ausreichen.
+% Außerdem ist auch nicht eindeutig, wo eine Eröffnung endet, da sich in den Dateien immer vollständige Spiele befinden.
+
+\subsection{Eröffnungslisten}
+Es existieren auch einige Eröffnungslisten, die keine vollständigen Spiele enthalten sondern nur die Eröffnungen. \cite{omur_yanikoglu_ecojson_2025} ist zum Beispiel eine Sammlung an Eröffnungen im JSON-Fromat. Sie enthält Eröffnungen aus der Encyclopedia of Chess Openings, der SCID Sammlung und von Wikipedia. Als Basis dient wiederum die Sammlung \cite{lichessorg_chess-openings_2025} von Lichess. Diese enthält die Eröffnungen der Encyclopedia of Chess Openings in TSV Dateien, die den ECO-Code, den englischen Namen, die Zugfolge in \ac{PGN}- und \ac{UCI}-Notation und die Endposition enthält.
+
+Die Sammlung von Lichess ist in einem Format, das gut für eine Lernanwendung geeignet ist. Sie ist mit mehreren tausend Eröffnungen allerdings sehr umfangreich und sollte noch gefiltert werden. Es gibt in der Datenstruktur auch keine direkte Gruppierung für die Eröffnungsfamilien. Die Familien können aber durch den englischen Namen erkannt werden. Er besitzt die Struktur \lstinline{Famile: Variation, Untervariation, ...}.

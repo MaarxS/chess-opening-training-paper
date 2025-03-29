@@ -74,6 +74,7 @@ Um die Datenspeicherung von dem Rest des Backends zu trennen wurde das Repositor
 \todo{todo}
 
 \subsection{Eröffnungen}
+\todo{Doppelungen entfernen}
 Damit die Eröffnungen gezeigt und überprüft werden können, müssen sie auch abgespeichert werden. Konkret müssen die Namen und Züge gespeichert werden. Diese Daten sind größtenteils unveränderlich. Mittlerweile wurden die meisten Eröffnungen dokumentiert und neue Eröffnungen sind oft nur Variationen bereits vorhandener Eröffnungen. Daher ist keine Datenbank notwendig um die Eröffnungen zu speichern. Eine Datei in einem standardisierten Format ist ausreichen. Es existieren auch bereits einige Eröffnungssammlungen im JSON-Fromat. In diesem Projekt wurde sich für die Sammlung \cite{lichessorg_chess-openings_2025} entschieden.
 
 In diesem Programm soll auch über Statistiken verfolgt werden, die gut ein Nutzer eine Eröffnung kann. Um die Statistiken den Eröffnungen zuzuordnen ist es notwendig die Eröffnungen über eine eindeutige ID zu referenzieren. Die Eröffnungen aus dem Datensatz besitzen bereits einen ECO-Code, welcher oft als Identifikator genutzt wird. Dieser ist allerdings nicht eindeutig. Für einen ECO-Code gibt es oft mehrere Variationen. Auch wenn zusätzlich der englische Name zur Identifikation genutzt wird ist die Zuordnung nicht eindeutig. Deshalb wurde die Liste gekürzt, sodass für jeden ECO-Code nur die Variante mit den meisten Zügen übernommen wird.\todo{Oder die längste?}
