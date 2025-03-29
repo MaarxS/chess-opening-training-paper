@@ -20,12 +20,23 @@ Das Programm soll eine Webanwendung sein auf der Nutzer mit einer benutzerfreund
     \item Statistik: Ein Nutzer kann sich Statistiken zu den Eröffnungen anschauen. Dazu zählt die Anzahl an richtigen und falschen Übungsdurchläufen. Diese Statistik wird auch zur Erstellung der Vorschläge verwendet.
 \end{itemize}
 
-\section{Endpunkte}
-Endpunkte in \ac{REST} sind ressourcenorientiert. Das bedeutet, die Pfade, die \ac{URI} genannt werden, bestehen aus einer hierarchischen Anordnung von Ressourcen. Die Funktion des Endpunkts wird über die HTTP-Methode beschrieben. Zum Beispiel wird durch GET eine Ressource angefragt, durch POST eine angelegt und durch DELETE wird sie gelöscht. Wenn eine Ressource eine Sammlung ist, wird der Endpunkt in der Mehrzahl notiert, auch dann, wenn nur auf ein einzelnes Element der Sammlung zugegriffen wird. Dadurch ist die Hierarchie einfacher zu erkennen. \todo{Quelle ergänzen}
+\section{Architektur}
+Die Architektur ist in mehrere verschiedene Bestandteile aufgeteilt. Die zentrale Aufteilung besteht zwischen Backend und Frontend. In dieser Arbeit wird nur das Backend betrachtet. In \autoref{fig:components} sind die groben Bestandteile zu sehen. Das Frontend greift auf eine \ac{REST}-API zu. Diese API hat wiederum Zugriff zu einer Schachengine, einer Liste an Eröffnungen, Nutzerdaten und Statistiken. Die Schachengine ist notwendig für das Spielen gegen den Computer. Aus der Liste der Eröffnungen können die Nutzer auswählen, welche sie erlernen oder üben möchten. Die Abfolge der Züge wird auch in dieser Liste gespeichert. Nutzerdaten sind notwendig um das Registrieren und den Login zu ermöglichen und die Statistiken sind nützlich um den Fortschritt der Spieler zu verfolgen.
 
-In der hier entwickelten API gibt es die fünf Wurzelendpunkte \lstinline{/engine}, \lstinline{/login}, \lstinline{/openings}, \lstinline{/users} und \lstinline{/stats}. Diese spiegeln die verschiedenen Bestandteile des Backends wieder. Das besteht aus einer Schachengine, Authentifizierung, einem Eröffnungsbuch, Nutzerverwaltung und Statistiken.
+\begin{figure}[h]
+    \includegraphics{images/diagrams/components.pdf}
+    \caption{Bestandteile der Architektur}
+    \label{fig:components}
+\end{figure}
+
+\section{REST-API}
+Die Endpunkte in \ac{REST} sind ressourcenorientiert. Das bedeutet, die Pfade, die \ac{URI} genannt werden, bestehen aus einer hierarchischen Anordnung von Ressourcen. Die Funktion des Endpunkts wird über die HTTP-Methode beschrieben. Zum Beispiel wird durch GET eine Ressource angefragt, durch POST eine angelegt und durch DELETE wird sie gelöscht. Wenn eine Ressource eine Sammlung ist, wird der Endpunkt in der Mehrzahl notiert, auch dann, wenn nur auf ein einzelnes Element der Sammlung zugegriffen wird. Dadurch ist die Hierarchie einfacher zu erkennen.
+\todo{Verschieben in Theorieteil}
+
+Die API wird in C\# realisiert. Mit dem ASP.NET Core Framework wird eine controllerbasierte Web-API erstellt. Das bedeutet, dass die Controller und die Daten voneinander getrennt werden. Es verhält sich ähnlich, wie eine Model View Controller Architektur, mit dem Unterschied, dass es keine View gibt, da es eine API ist. Die View wird separat im Frontend entwickelt. Die Controller und die Models sind im Backend vorhanden. Die Controller offenbaren die API-Endpunkte nach außen und die Models stellen die Daten dar. Für die vier unterschiedlichen Bereiche des Backends existiert jeweils ein dazugehöriger Controller. Jeder Controller repräsentiert dabei einen Wurzelendpunkt in der REST-API. Damit gibt es die vier Wurzelendpunkte \lstinline{/engine}, \lstinline{/openings}, \lstinline{/users} und \lstinline{/stats}. 
 
 Um die Kernfeatures der Anwendung zu ermöglichen werden die folgenden Endpunkte unter \lstinline{/openings} implementiert.
+\todo{Separates Kapitel?}
 
 \begin{itemize}
     \item GET \verb|/openings|
@@ -48,5 +59,22 @@ Mit ihnen kann man den Lern- und Übungsmodus umsetzen. Der Ablauf des Lernmodus
     \label{fig:sd_opening_training}
 \end{figure}
 
-\section{Aufbau}
-Als Programmiersprache wurde C\# gewählt aufgrund der guten Unterstützung und Dokumentation von Microsoft Bibliotheken. Außerdem kann C\# auf mehreren Plattformen ausgeführt werden und besitzt Typsicherheit durch statische Typisierung. Als Backend Framework wird .NET Core eingesetzt mit dem \ac{MVC} Pattern.
+\section{Datenspeicherung}
+Die Datenspeicherung findet hauptsächlich im Backend der Anwendung statt. Dafür müssen folgende Daten gespeichert werden:
+\begin{itemize}
+    \item Eröffnungen: Es werden die Namen der Eröffnungen und Zugabfolgen benötigt.
+    \item Nutzerdaten: Es werden Benutzernamen und Passwörter benötigt um zu ermöglichen, dass sich Benutzer registrieren und anmelden können.
+    \item Statistiken: Die Statistiken der Nutzer müssen gespeichert werden um den Fortschritt der Nutzer darzustellen und das Lernen zu personalisieren.
+\end{itemize}
+
+\subsection{Repository Pattern}
+Um die Datenspeicherung von dem Rest des Backends zu trennen wurde das Repository Pattern angewendet. Bei diesem Pattern wird eine Repository-Klasse erstellt, welche die Abfragelogik enthält. Nach außen werden nur abstrakte domänenspezifische Funktionen exponiert, wie zum Beispiel \lstinline{GetUser(id: int): User} oder lstinline{CreateUser(name: string, password: string)}. Die Implementierung dieser Klasse sorgt dann dafür, dass die entsprechenden Daten gefunden, aktualisiert oder hinzugefügt werden. Diese Abfragen können zum Beispiel komplexe SQL-Abfragen sein oder auch das Lesen einer Datei. In diesem Projekt wird jede Repository durch ein Interface definiert. Das ermöglicht es die jeweiligen Implementierungen mittels Dependency Injection zu ersetzen. \cite{evans_domain-driven_2004}
+
+\subsection{Dependency Injection}
+\todo{todo}
+
+\subsection{Eröffnungen}
+Damit die Eröffnungen gezeigt und überprüft werden können, müssen sie auch abgespeichert werden. Konkret müssen die Namen und Züge gespeichert werden. Diese Daten sind größtenteils unveränderlich. Mittlerweile wurden die meisten Eröffnungen dokumentiert und neue Eröffnungen sind oft nur Variationen bereits vorhandener Eröffnungen. Daher ist keine Datenbank notwendig um die Eröffnungen zu speichern. Eine Datei in einem standardisierten Format ist ausreichen. Es existieren auch bereits einige Eröffnungssammlungen im JSON-Fromat. In diesem Projekt wurde sich für die Sammlung \cite{lichessorg_chess-openings_2025} entschieden.
+
+In diesem Programm soll auch über Statistiken verfolgt werden, die gut ein Nutzer eine Eröffnung kann. Um die Statistiken den Eröffnungen zuzuordnen ist es notwendig die Eröffnungen über eine eindeutige ID zu referenzieren. Die Eröffnungen aus dem Datensatz besitzen bereits einen ECO-Code, welcher oft als Identifikator genutzt wird. Dieser ist allerdings nicht eindeutig. Für einen ECO-Code gibt es oft mehrere Variationen. Auch wenn zusätzlich der englische Name zur Identifikation genutzt wird ist die Zuordnung nicht eindeutig. Deshalb wurde die Liste gekürzt, sodass für jeden ECO-Code nur die Variante mit den meisten Zügen übernommen wird.\todo{Oder die längste?}
+
