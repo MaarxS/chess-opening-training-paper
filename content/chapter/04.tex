@@ -24,7 +24,7 @@ Das Programm soll eine Webanwendung sein auf der Nutzer mit einer benutzerfreund
 Die Architektur ist in mehrere verschiedene Bestandteile aufgeteilt. Die zentrale Aufteilung besteht zwischen Backend und Frontend. In dieser Arbeit wird nur das Backend betrachtet. In \autoref{fig:components} sind die groben Bestandteile zu sehen. Das Frontend greift auf eine \ac{REST}-API zu. Diese API hat wiederum Zugriff zu einer Schachengine, einer Liste an Eröffnungen, Nutzerdaten und Statistiken. Die Schachengine ist notwendig für das Spielen gegen den Computer. Aus der Liste der Eröffnungen können die Nutzer auswählen, welche sie erlernen oder üben möchten. Die Abfolge der Züge wird auch in dieser Liste gespeichert. Nutzerdaten sind notwendig um das Registrieren und den Login zu ermöglichen und die Statistiken sind nützlich um den Fortschritt der Spieler zu verfolgen.
 
 \begin{figure}[h]
-    \includegraphics{images/diagrams/components.pdf}
+    \includegraphics[width=\linewidth]{images/diagrams/components.png}
     \caption{Bestandteile der Architektur}
     \label{fig:components}
 \end{figure}
