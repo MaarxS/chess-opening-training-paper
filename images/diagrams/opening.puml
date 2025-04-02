@@ -1,0 +1,39 @@
+@startuml
+class OpeningOverview {
+    + id: string,
+    + name: string
+}
+class OpeningMove {
+    + name: string,
+    + move: string
+}
+class Opening {
+    + id: string
+    + name: string
+    + moves: string
+    + IsRoot(): bool
+    + IsInFamily(familyName: string): bool
+    + NextMove(previousMoves: string): String
+}
+class OpeningController {
+    + GetOpenings(): [OpeningOverview]
+    + GetVariants(id: string): [OpeningOverview]
+    + GetMoveVariants(id: string, played: string): [OpeningMove]
+    + GetNextMove(id: string, played): OpeningMove
+}
+interface IOpeningRepository {
+    + GetOpenings(): [Opening]
+    + GetOpening(id: string): Opening
+    + GetVariants(id: string): [Opening]
+    + GetOpeningsWithPlayedMoves(id: string, played: string): [Opening]
+}
+Interface IOpeningReader {
+    + Read(): [Opening]
+}
+
+
+OpeningController --> IOpeningRepository
+IOpeningRepository <|-- OpeningRepository
+OpeningRepository --> IOpeningReader
+IOpeningReader <|-- OpeningReaderTSV
+@enduml

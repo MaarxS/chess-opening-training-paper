@@ -63,14 +63,12 @@ Stockfish verwendet Alpha-Beta-Pruning um die besten Züge herauszufinden. Früh
 Für dieses Projekt wird die Schachengine Stockfish verwendet. Sie ist die aktuell stärkste Schachengine und auch kostenlos. Sie kann von der Stärke auch angepasst werden und über \ac{UCI} angesteuert werden. Das macht sie geeignet um sie in ein anderes Programm einzubinden.
 
 \section{Eröffnungssammlungen}
-\label{cp:opening collections}
 In diesem Kapitel wird beschrieben, welche Eröffnungssammlungen existieren und es wird bewertet, wie gut sie für eine Lernanwendung für Eröffnungen verwendet werden können.
 
 \subsection{Encyclopedia of Chess Openings}
 Die Encyclopedia of Chess Openings ist eine der bekanntesten Sammlungen von Schacheröffnungen. Sie wurde erstellt, um den aktuellen Stand der Eröffnungstheorie festzuhalten.
 Die Editoren, von denen die meisten Großmeister sind, wählten aus den Partien von Schachmeistern die Züge aus, die sie für am bedeutendsten hielten. Die Eröffnungen wurden in die fünf Kategorien A bis E aufgeteilt, für die jeweils ein Buch veröffentlicht wurde. Die Kategorien sind wiederum unterteilt in hundert nummerierte Unterkategorien. Die Kategorien und ihre Nummern werden auch ECO Codes genannt.
 \cite{wikipedia_foundation_inc_encyclopaedia_2024}
-\todo{mehrdeutigkeit von ECO Codes}
 
 Mit dieser Sammlung wären die wichtigsten Eröffnungen abgedeckt. Allerdings ist die Encyclopedia of Chess Openings in erster Linie eine Buchreihe, in der die Eröffnungen in Tabellenform dargestellt wird mit textuellen Beschreibungen in natürlicher Sprache. Um die Eröffnungen in einem Programm zu verwenden, müssen sie allerdings in maschinenlesbarer Form vorliegen.
 
@@ -91,4 +89,12 @@ Im Internet kann man auch einige kostenlose Polyglott- oder PGN-Eröffnungsbüch
 \subsection{Eröffnungslisten}
 Es existieren auch einige Eröffnungslisten, die keine vollständigen Partien enthalten sondern nur die Eröffnungen. \cite{omur_yanikoglu_ecojson_2025} ist zum Beispiel eine Sammlung an Eröffnungen im JSON-Format. Sie enthält Eröffnungen aus der Encyclopedia of Chess Openings, der SCID Sammlung und von Wikipedia. Als Basis dient wiederum die Sammlung \cite{lichessorg_chess-openings_2025} von Lichess. Diese enthält die Eröffnungen der Encyclopedia of Chess Openings in TSV-Dateien, die den ECO-Code, den englischen Namen, die Zugfolge in \ac{PGN} und \ac{UCI}-Notation und die Endposition enthält.
 
-Die Sammlung von Lichess ist in einem Format, das gut für eine Lernanwendung geeignet ist. Sie ist mit mehreren tausend Eröffnungen allerdings sehr umfangreich und sollte noch gefiltert werden. Es gibt in der Datenstruktur auch keine direkte Gruppierung für die Eröffnungsfamilien. Die Familien können aber durch den englischen Namen erkannt werden. Er besitzt die Struktur \lstinline{Familie: Variation, Untervariation, ...}.
+Die Sammlung von Lichess ist in einem Format, das relativ gut für eine Lernanwendung geeignet ist. Sie ist mit 3514 Eröffnungen allerdings sehr umfangreich und sollte noch gefiltert werden. Es gibt in der Datenstruktur auch keine direkte Gruppierung für die Eröffnungsfamilien. Die Familien können aber durch den englischen Namen erkannt werden. Er besitzt die Struktur \lstinline{Familie: Variation, Untervariation, ...}. Ein weiteres Problem ist, dass es keine eindeutigen IDs gibt. Es wird zwar zu jeder Eröffnung der ECO-Code angegeben, dieser ist aber nicht eindeutig. Auch der englische Name erlaubt keine eindeutige Identifikation. 
+
+\subsection{Angepasste Eröffnungsliste}
+\label{cp:opening list}
+Wie im vorigen Kapitel gesehen wurde, können die gefundenen Eröffnungslisten nicht sofoft verwendet werden. Sie müssen erst gefiltert werden, damit die Anwendung nicht unübersichtlich wird und es müssen Daten ergänzt werden, wie die Eröffnungsfamilie und die ID.
+
+Die Zuordnung der Eröffnungsfamilien kann über den englischen Namen der Eröffnung gelöst werden. Alle, die zur selben Familie gehören beginnen mit dem selben Namen. Die Eröffnungen können also danach gruppiert werden, ob sie mit dem selben Namen beginnen.
+
+Für die anderen beiden Probleme gibt es mehrere Lösungsmöglichkeiten. Um beide Probleme gleichzeitig zu lösen könnte man pro ECO-Code eine Eröffnung auswählen. Danach hat man noch 500 Eröffnungen, was immer noch eine große Auswahl ist. Um herauszufinden welche Eröffnung am relevantesten ist könnte man entweder vergleichen welche Eröffnungen in Büchern typischerweise beschrieben werden oder in einer Eröffnungsdatenbank nachschauen, welche Eröffnungen am häufigsten gespielt werden. Diese Optionen sind allerdings beide sehr zeitaufwendig und bei der Anzahl an Eröffnungen würde es mehrere Monate dauern alle Eröffnungen zu untersuchen. Für den ersten Prototyp könnte man stattdessen als Auswahlkriterium bei gleichem ECO-Code immer die erste Variation wählen, eine zufällige oder die Variation mit den meisten Zügen. Falls nicht so viele Eröffnungsvariationen herausfiltern werden sollen kann man auch den Hash des englischen Namens als ID verwenden und pro Name eine Eröffnung auswählen. Hier hat man die gleichen Auswahlkriterien zur Auswahl. Man kann die große Anzahl an Eröffnungen auch als Vorteil sehen. In diesem Fall könnte man die Eröffnungen der Reihe nach durchnummerieren um eine eindeutige IDs zu bekommen.

@@ -1,6 +1,6 @@
 %!TEX root = ../../main.tex
 
-\chapter{Entwurf}
+\chapter{Entwurf} % oder Entwicklung
 In diesem Kapitel wird der Entwurf und die Architektur des Programms beschrieben. Zuerst wird beschrieben, welche Funktionen das Programm haben soll. Danach wird auf den Aufbau und die Architektur der Rest-API eingegangen. Es wird beschrieben, wie die Endpunkte der API gestaltet sind, welche Technologien verwendet werden und wie der innere Aufbau der API gestaltet ist.
 
 % In diesem Kapitel wird auf die Struktur und Architektur der Rest-API eingegangen. Es wird zuerst beschrieben, wie die Endpunkte der API gestaltet sind und anschließend werden die verwendeten Technologien und der innere Aufbau beschrieben.
@@ -20,28 +20,6 @@ Das Programm soll eine Webanwendung sein auf der Nutzer mit einer benutzerfreund
     \item Statistik: Ein Nutzer kann sich Statistiken zu den Eröffnungen anschauen. Dazu zählt die Anzahl an richtigen und falschen Übungsdurchläufen. Diese Statistik wird auch zur Erstellung der Vorschläge verwendet.
 \end{itemize}
 
-\section{Architektur}
-Die Architektur ist in mehrere verschiedene Bestandteile aufgeteilt. Die zentrale Aufteilung besteht zwischen Backend und Frontend. In dieser Arbeit wird nur das Backend betrachtet. In \autoref{fig:components} sind die groben Bestandteile zu sehen. Das Frontend greift auf eine \ac{REST}-API zu. Diese API hat wiederum Zugriff zu einer Schachengine, einer Liste an Eröffnungen, Nutzerdaten und Statistiken. Die Schachengine ist notwendig für das Spielen gegen den Computer. Aus der Liste der Eröffnungen können die Nutzer auswählen, welche sie erlernen oder üben möchten. Die Abfolge der Züge wird auch in dieser Liste gespeichert. Nutzerdaten sind notwendig um das Registrieren und den Login zu ermöglichen und die Statistiken sind nützlich um den Fortschritt der Spieler zu verfolgen.
-
-\begin{figure}[h]
-    \includegraphics[width=\linewidth]{images/diagrams/components.png}
-    \caption{Bestandteile der Architektur}
-    \label{fig:components}
-\end{figure}
-
-\section{REST-API}
-Die API wird in C\# realisiert. Mit dem ASP.NET Core Framework wird eine controllerbasierte Web-API erstellt. Das bedeutet, dass die Controller und die Daten voneinander getrennt werden. Es verhält sich ähnlich, wie eine Model View Controller Architektur, mit dem Unterschied, dass es keine View gibt, da es eine API ist. Die View wird separat im Frontend entwickelt. Die Controller und die Models sind im Backend vorhanden. Die Controller offenbaren die API-Endpunkte nach außen und die Models stellen die Daten dar. Für die vier unterschiedlichen Bereiche des Backends existiert jeweils ein dazugehöriger Controller. Jeder Controller repräsentiert dabei einen Wurzelendpunkt in der REST-API. Damit gibt es die vier Wurzelendpunkte \lstinline{/engine}, \lstinline{/openings}, \lstinline{/users} und \lstinline{/stats}. 
-
-\section{Eröffnungen}
-Damit die Eröffnungen gezeigt und überprüft werden können, müssen sie auch abgespeichert werden. Wichtig ist dabei der Name und die Züge. Diese Daten haben eine geringe Änderungsfrequenz und bleiben größtenteils unverändert, deshalb ist keine Datenbank dafür notwendig. Die Daten können stattdessen aus einer Datei geladen werden. In \autoref{cp:opening collections} wurde bereits beschrieben, welche Arten von Eröffnungssammlungen es gibt. Für dieses Projekt wurde die Sammlung \cite{lichessorg_chess-openings_2025} gewählt.
-
-Dieser Datensatz kann aber nicht sofort verwendet werden. Es gibt einige Probleme, wenn man ihn direkt in die Anwendung einbinden würde. Zum einen enthält er mit 3514 Eröffnungen sehr viele Eröffnungen, was die Anwendung unübersichtlich machen würde. Zum Anderen ist in dem Datensatz keine direkte Gruppierung zu Eröffnungsfamilien vorhanden. Ein weiteres Problem ist, dass es keine eindeutigen IDs gibt. Es wird zwar zu jeder Eröffnung der ECO-Code angegeben, dieser ist aber nicht eindeutig. Auch der englische Name erlaubt keine eindeutige Identifikation.
-
-Die Zuordnung der Eröffnungsfamilien kann über den englischen Namen der Eröffnung gelöst werden. Alle, die zur selben Familie gehören beginnen mit dem selben Namen. Variationen einer Eröffnung beginnen mit dem Namen der Familie, gefolgt von einem Doppelpunkt und einem Variantennamen z. B. \lstinline{Familie: Variation}. Die Eröffnungen können also danach gruppiert werden, ob sie mit dem selben Namen beginnen.
-
-Für die anderen beiden Probleme gibt es mehrere Lösungsmöglichkeiten. Um beide Probleme gleichzeitig zu lösen könnte man pro ECO-Code eine Eröffnung auswählen. Danach hat man noch 500 Eröffnungen, was immer noch eine große Auswahl ist. Als Auswahlkriterium könnte man bei gleichem ECO-Code immer die erste Variation wählen, eine zufällige oder die Variation mit den meisten Zügen. Alternativ kann man auch den Hash des englischen Namens als ID verwenden und pro Name eine Eröffnung auswählen. Hier hat man auch die gleichen Auswahlkriterien zur Auswahl. Man kann die große Anzahl an Eröffnungen auch als Vorteil sehen. In diesem Fall könnte man die Eröffnungen der Reihe nach durchnummerieren um eine eindeutige IDs zu bekommen.
-\todo{Welche Lösung auswählen?}
-
 \section{Patterns}
 
 \subsection{Repository Pattern}
@@ -50,6 +28,41 @@ Um die Datenspeicherung von dem Rest des Backends zu trennen wurde das Repositor
 
 \subsection{Dependency Injection}
 \todo{TODO}
+
+\section{Architektur}
+Die Architektur ist in mehrere verschiedene Bestandteile aufgeteilt. Die zentrale Aufteilung besteht zwischen Backend und Frontend. In dieser Arbeit wird nur das Backend betrachtet. In \autoref{fig:components} sind die groben Bestandteile zu sehen. Das Frontend greift auf eine \ac{REST}-API zu.
+Die API ist wiederum aufgeteilt in die vier Bestandteile Eröffnungen, Nutzerdaten, Statistiken und die Schachengine.
+Die Bestandteile werden in den folgenden Unterkapiteln näher erklärt.
+% Der Bestandteil Eröffnungen ist für alles zuständig, wofür die Daten für Eröffnungen benötigt werden. Dazu gehört also das Lernen und Üben von Eröffnungen. Der Bestandteil Nutzerdaten ist notwendig um das Registrieren und den Login zu ermöglichen und die Statistiken sind nützlich um den Fortschritt der Spieler zu verfolgen und ermöglichen eine personalisierte Anpassung der Lernerfahrung. Die Schachengine ist notwendig für das Spielen gegen den Computer.
+
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{images/diagrams/components.png}
+    \caption{Komponentendiagramm}
+    \label{fig:components}
+\end{figure}
+
+\subsection{REST-API}
+Die API wird in C\# realisiert. Mit dem ASP.NET Core Framework wird eine controllerbasierte Web-API erstellt. Das bedeutet, dass die Controller und die Daten voneinander getrennt werden. Die Architektur ist ähnlich, wie eine Model View Controller Architektur, mit dem Unterschied, dass es keine View gibt. Die View wird separat im Frontend entwickelt. Die Controller und die Models sind im Backend vorhanden. Die Controller offenbaren die API-Endpunkte nach außen und die Models stellen die Daten dar. Für die vier unterschiedlichen Bereiche des Backends existiert jeweils ein dazugehöriger Controller. Jeder Controller repräsentiert dabei einen Wurzelendpunkt in der REST-API. Damit gibt es die vier Wurzelendpunkte \lstinline{/engine}, \lstinline{/openings}, \lstinline{/users} und \lstinline{/stats}.
+
+\subsection{Eröffnungen}
+Der Bestandteil Eröffnungen ist für alles zuständig, wofür die Daten für Eröffnungen benötigt werden. Dazu gehört also das Lernen und Üben von Eröffnungen. \autoref{fig:cd_opening} zeigt dazugehörigen Klasse. Der OpeningController definiert alle Endpunkte unter der URI \lstinline{/openings}. Jede public Funktion der Klasse ist in diesem Fall für einen Endpunkt zuständig. Die Zuteilung ist folgendermaßen gestaltet:
+
+\begin{itemize}
+  \item \lstinline|/openings| $\rightarrow$ GetOpenings
+  \item \lstinline|/openings/{id}/variant| $\rightarrow$ GetVariants
+  \item \lstinline|/openings/{id}/variant/next-moves| $\rightarrow$ GetMoveVariants
+  \item \lstinline|/oepnings/{id}/next-move| $\rightarrow$ GetNextMove
+\end{itemize}
+
+Opening ist die Model Klasse. Sei enthält alle benötigten Daten zu einer Eröffnung. Die API gibt dann entweder Instanzen der Klassen OpeningOverview oder OpeningMove zurück, die einen Teil der Informationen von Opening besitzen. Die Daten werden über das Repository Pattern abgefragt. IOpeningRepository enthält also alle Funtionen, um die Daten in der Form abzufragen, wie sie der OpeningController benötigt. Für die Eröffnungen ist der Datenspeicher eine TSV-Datei. Die TSV-Datei wurde dem Lichess Datensatz abgeleitet und nach x\todo{nach was} gefiltert. Die OpeningRepository verwendet wiederum den IOpeningReader, welche das Lesen der TSV-Datei abstrahiert. Auf diese Weise kann die TSV-Datei ohne viel Aufwand durch eine CSV- oder JSON-Datei ausgetauscht werden. Dafür muss nur eine entsprechende Implementierung für den IOpeningReader geschrieben werden.
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{images/diagrams/opening.png}
+  \caption{Klassendiagramm Eröffnungen}
+  \label{fig:cd_opening}
+\end{figure}
+
+Damit die Eröffnungen gezeigt und überprüft werden können, müssen sie auch abgespeichert werden. Wichtig ist dabei der Name und die Züge. Diese Daten haben eine geringe Änderungsfrequenz und bleiben größtenteils unverändert, deshalb ist keine Datenbank dafür notwendig. Die Daten können stattdessen aus einer Datei geladen werden. In \autoref{cp:opening collections} wurde bereits beschrieben, welche Arten von Eröffnungssammlungen es gibt. Für dieses Projekt wurde die Sammlung \cite{lichessorg_chess-openings_2025} gewählt.
 
 \section{Laufzeitsicht Vorläufig}
 Um die Kernfeatures der Anwendung zu ermöglichen werden die folgenden Endpunkte unter \lstinline{/openings} implementiert.

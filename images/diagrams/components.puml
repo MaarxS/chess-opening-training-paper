@@ -7,7 +7,7 @@ package "REST-API" as API {
   [Statistiken]
 }
 [UCI-Engine] as uci
-database Eroeffnungsbuch as buch
+database Eroeffnungsliste as liste
 database "SQL-Datenbank" as sql
 
 Frontend --> API
@@ -17,7 +17,7 @@ API --> Nutzerdaten
 API --> Statistiken
 
 Schachengine --> uci
-Eroeffnungen --> buch
+Eroeffnungen --> liste
 Nutzerdaten --> sql
 Statistiken --> sql
 
