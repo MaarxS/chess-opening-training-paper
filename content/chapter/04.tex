@@ -45,7 +45,7 @@ Die Bestandteile werden in den folgenden Unterkapiteln näher erklärt.
 Die API wird in C\# realisiert. Mit dem ASP.NET Core Framework wird eine controllerbasierte Web-API erstellt. Das bedeutet, dass die Controller und die Daten voneinander getrennt werden. Die Architektur ist ähnlich, wie eine Model View Controller Architektur, mit dem Unterschied, dass es keine View gibt. Die View wird separat im Frontend entwickelt. Die Controller und die Models sind im Backend vorhanden. Die Controller offenbaren die API-Endpunkte nach außen und die Models stellen die Daten dar. Für die vier unterschiedlichen Bereiche des Backends existiert jeweils ein dazugehöriger Controller. Jeder Controller repräsentiert dabei einen Wurzelendpunkt in der REST-API. Damit gibt es die vier Wurzelendpunkte \lstinline{/engine}, \lstinline{/openings}, \lstinline{/users} und \lstinline{/stats}.
 
 \subsection{Eröffnungen}
-Der Bestandteil Eröffnungen ist für alles zuständig, wofür die Daten für Eröffnungen benötigt werden. Dazu gehört also das Lernen und Üben von Eröffnungen. \autoref{fig:cd_opening} zeigt dazugehörigen Klasse. Der OpeningController definiert alle Endpunkte unter der URI \lstinline{/openings}. Jede public Funktion der Klasse ist in diesem Fall für einen Endpunkt zuständig. Die Zuteilung ist folgendermaßen gestaltet:
+Der Bestandteil Eröffnungen ist für alles zuständig, wofür die Daten der Eröffnungen benötigt werden. Dazu gehört also das Lernen und Üben von Eröffnungen. \autoref{fig:cd_opening} zeigt die dazugehörigen Klassen. Der OpeningController definiert alle Endpunkte unter der URI \lstinline{/openings}. Jede public Funktion der Klasse ist in diesem Fall für einen Endpunkt zuständig. Die Zuteilung ist folgendermaßen gestaltet:
 
 \begin{itemize}
   \item \lstinline|/openings| $\rightarrow$ GetOpenings
@@ -54,15 +54,13 @@ Der Bestandteil Eröffnungen ist für alles zuständig, wofür die Daten für Er
   \item \lstinline|/oepnings/{id}/next-move| $\rightarrow$ GetNextMove
 \end{itemize}
 
-Opening ist die Model Klasse. Sei enthält alle benötigten Daten zu einer Eröffnung. Die API gibt dann entweder Instanzen der Klassen OpeningOverview oder OpeningMove zurück, die einen Teil der Informationen von Opening besitzen. Die Daten werden über das Repository Pattern abgefragt. IOpeningRepository enthält also alle Funtionen, um die Daten in der Form abzufragen, wie sie der OpeningController benötigt. Für die Eröffnungen ist der Datenspeicher eine TSV-Datei. Die TSV-Datei wurde dem Lichess Datensatz abgeleitet und nach x\todo{nach was} gefiltert. Die OpeningRepository verwendet wiederum den IOpeningReader, welche das Lesen der TSV-Datei abstrahiert. Auf diese Weise kann die TSV-Datei ohne viel Aufwand durch eine CSV- oder JSON-Datei ausgetauscht werden. Dafür muss nur eine entsprechende Implementierung für den IOpeningReader geschrieben werden.
+Opening ist die Model Klasse. Sei enthält alle benötigten Daten zu einer Eröffnung. Die API gibt dann entweder Instanzen der Klassen OpeningOverview oder OpeningMove zurück, die einen Teil der Informationen von Opening besitzen. Die Daten werden über das Repository Pattern abgefragt. IOpeningRepository enthält also alle Funtionen, um die Daten in der Form abzufragen, wie sie der OpeningController benötigt. Der Datenspeicher eine TSV-Datei, die von dem Lichess Datensatz abgeleitet wurde. \todo{genauer beschreiben}  Die OpeningRepository verwendet wiederum den IOpeningReader, welche das Lesen der TSV-Datei abstrahiert. Auf diese Weise kann die TSV-Datei ohne viel Aufwand durch eine CSV- oder JSON-Datei ausgetauscht werden. Dafür muss nur eine entsprechende Implementierung für den IOpeningReader geschrieben werden.
 
-\begin{figure}
+\begin{figure}[h]
   \includegraphics[width=\linewidth]{images/diagrams/opening.png}
   \caption{Klassendiagramm Eröffnungen}
   \label{fig:cd_opening}
 \end{figure}
-
-Damit die Eröffnungen gezeigt und überprüft werden können, müssen sie auch abgespeichert werden. Wichtig ist dabei der Name und die Züge. Diese Daten haben eine geringe Änderungsfrequenz und bleiben größtenteils unverändert, deshalb ist keine Datenbank dafür notwendig. Die Daten können stattdessen aus einer Datei geladen werden. In \autoref{cp:opening collections} wurde bereits beschrieben, welche Arten von Eröffnungssammlungen es gibt. Für dieses Projekt wurde die Sammlung \cite{lichessorg_chess-openings_2025} gewählt.
 
 \section{Laufzeitsicht Vorläufig}
 Um die Kernfeatures der Anwendung zu ermöglichen werden die folgenden Endpunkte unter \lstinline{/openings} implementiert.
