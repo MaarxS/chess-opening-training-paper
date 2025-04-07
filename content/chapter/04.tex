@@ -48,13 +48,13 @@ Die API wird in C\# realisiert. Mit dem ASP.NET Core Framework wird eine control
 Der Bestandteil Eröffnungen ist für alles zuständig, wofür die Daten der Eröffnungen benötigt werden. Dazu gehört also das Lernen und Üben von Eröffnungen. \autoref{fig:cd_opening} zeigt die dazugehörigen Klassen. Der OpeningController definiert alle Endpunkte unter der URI \lstinline{/openings}. Jede public Funktion der Klasse ist in diesem Fall für einen Endpunkt zuständig. Die Zuteilung ist folgendermaßen gestaltet:
 
 \begin{itemize}
-  \item \lstinline|/openings| $\rightarrow$ GetOpenings
-  \item \lstinline|/openings/{id}/variant| $\rightarrow$ GetVariants
-  \item \lstinline|/openings/{id}/variant/next-moves| $\rightarrow$ GetMoveVariants
-  \item \lstinline|/oepnings/{id}/next-move| $\rightarrow$ GetNextMove
+  \item \lstinline|GET /openings| $\rightarrow$ GetOpenings
+  \item \lstinline|GET /openings/{id}/variant| $\rightarrow$ GetVariants
+  \item \lstinline|GET /openings/{id}/variant/next-moves| $\rightarrow$ GetMoveVariants
+  \item \lstinline|GET /openings/{id}/next-move| $\rightarrow$ GetNextMove
 \end{itemize}
 
-Opening ist die Model Klasse. Sei enthält alle benötigten Daten zu einer Eröffnung. Die API gibt dann entweder Instanzen der Klassen OpeningOverview oder OpeningMove zurück, die einen Teil der Informationen von Opening besitzen. Die Daten werden über das Repository Pattern abgefragt. IOpeningRepository enthält also alle Funtionen, um die Daten in der Form abzufragen, wie sie der OpeningController benötigt. Der Datenspeicher eine TSV-Datei, die von dem Lichess Datensatz abgeleitet wurde. \todo{genauer beschreiben}  Die OpeningRepository verwendet wiederum den IOpeningReader, welche das Lesen der TSV-Datei abstrahiert. Auf diese Weise kann die TSV-Datei ohne viel Aufwand durch eine CSV- oder JSON-Datei ausgetauscht werden. Dafür muss nur eine entsprechende Implementierung für den IOpeningReader geschrieben werden.
+Opening ist die Model Klasse. Sei enthält alle benötigten Daten zu einer Eröffnung. Die API gibt bei einer Anfrage entweder Instanzen der Klassen OpeningOverview oder OpeningMove zurück, die einen Teil der Informationen von Opening besitzen. Dadurch wird Bandbreite gespart und der Client bekommt nur die Daten, die er auch benötigt. Der Datenspeicher ist eine TSV-Datei, die von dem Lichess Datensatz abgeleitet wurde. \todo{genauer beschreiben} Er wird über das Repository Pattern abgefragt. IOpeningRepository enthält also alle Funtionen, um die Daten abzufragen und zu strukturieren, wie sie der OpeningController benötigt. Die OpeningRepository verwendet wiederum den IOpeningReader, welcher das Lesen der TSV-Datei abstrahiert. Auf diese Weise kann die TSV-Datei ohne viel Aufwand durch eine CSV- oder JSON-Datei ausgetauscht werden. Dafür muss nur eine entsprechende Implementierung für den IOpeningReader erstellt werden.
 
 \begin{figure}[h]
   \includegraphics[width=\linewidth]{images/diagrams/opening.png}
@@ -62,14 +62,26 @@ Opening ist die Model Klasse. Sei enthält alle benötigten Daten zu einer Eröf
   \label{fig:cd_opening}
 \end{figure}
 
+\section{SQL-Datenbank}
+Die dynamischen Daten werden in einer relationalen SQL-Datenbank gespeichert. Dazu zählen die Logindaten der Nutzer und die Nutzerstatistiken zu den Eröffnungen. Dafür existieren die zwei Tabellen User und TrainingResult, welche nachfolgend in Relationenschreibweise notiert sind, wobei der Primärschlüssel fett gedruckt ist und der Fremdschlüssel kursiv:
+
+\begin{itemize}
+  \item User(\textbf{Id}, Name, PasswordHash)
+  \item TrainingResult(\textbf{Id}, \textit{UserId}, OpeningId, Errors, Hints, DateTime)
+\end{itemize}
+
+Die Usertabelle existiert um das Einloggen und Registrieren zu ermöglichen. Mit einem Benutzernamen und einem Passwort kann sich ein Nutzer anmelden. Der Name besitzt aus diesem Grund einen Unique Constriant. Das Passwort wird in gehashter Form gespeichert. Für die Statistiken werden die Ergebnisse der Trainings gespeichert. Es wird gespeichert, wer das Training ausgeführt hat, für welche Eröffnung das Training ist, wie viele Fehler gemacht wurden, wie viele Hinweise benötigt wurden und zu welchem Zeitpunkt das Training ausgeführt wurde. OpeningId ist in diesem Fall kein Fremdschlüssel, da die Eröffnungen nicht in der relationalen Datenbank abgespeichert sind, sondern in einer separaten TSV-Datei. Mithilfe dieser Daten können durch SQL-Abfragen beliebige Statistiken erstellt werden.
+
+Für den Datenbankzugriff wird ein \ac{ORM} verwendet. Microsoft bietet in C\# dafür das Entity Framework Core an. Der Vorteil eines \ac{ORM}s ist, dass es den Zugriff auf die Datenbank nochmal abstrahiert. Zwischen den unterschiedlichen SQL-Datenbanken gibt es einige Unterschiede, auf die geachtet werden muss, beim Schreiben von reinem SQL. Ein \ac{ORM} abstrahiert diese Unterschiede, indem der Zugriff und die Tabellenstruktur in der Sprache des ORM-Frameworks beschrieben wird, in diesem Fall C\#. Ein weiterer Vorteil ist, dass \ac{ORM}s vor einigen Fehlern, wie zum Beispiel Query-Injection schützen. Das Entity Framework Core besitzt zudem ein robustes System für Datenbankmigrationen. So ist es möglich Tabellenstrukturen auch im Nachhinein zu ändern und die Datenbanken mit geringem Risiko zu migrieren. Mit dem Entity Framework Core kann man zwischen vielen SQL-Datenbanken wählen. Für dieses Projekt wird PostgreSQL verwendet, da sie weit verbreitet ist und bekannt für ihre Stabilität.
+
 \section{Laufzeitsicht Vorläufig}
 Um die Kernfeatures der Anwendung zu ermöglichen werden die folgenden Endpunkte unter \lstinline{/openings} implementiert.
 
 \begin{itemize}
-    \item GET \verb|/openings|
-    \item GET \verb|/openings/{id}/variants|
-    \item GET \verb|/openings/{id}/variants/next-moves|
-    \item GET \verb|/openings/{id}/next-move|
+    \item \verb|GET /openings|
+    \item \verb|GET /openings/{id}/variants|
+    \item \verb|GET /openings/{id}/variants/next-moves|
+    \item \verb|GET /openings/{id}/next-move|
 \end{itemize}
 
 Mit ihnen kann man den Lern- und Übungsmodus umsetzen. Der Ablauf des Lernmodus ist in \autoref{fig:sd_opening_training} dargestellt. Er kann in den folgenden drei Schritten zusammengefasst werden.
