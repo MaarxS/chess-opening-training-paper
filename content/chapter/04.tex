@@ -1,12 +1,10 @@
 %!TEX root = ../../main.tex
 
 \chapter{Entwurf} % oder Entwicklung
-In diesem Kapitel wird der Entwurf und die Architektur des Programms beschrieben. Zuerst wird beschrieben, welche Funktionen das Programm haben soll. Danach wird auf den Aufbau und die Architektur der Rest-API eingegangen. Es wird beschrieben, wie die Endpunkte der API gestaltet sind, welche Technologien verwendet werden und wie der innere Aufbau der API gestaltet ist.
+In diesem Kapitel wird der Entwurf und die Architektur des Programms beschrieben. Zuerst wird beschrieben, welche Anforderungen es an das Programm gibt. Danach werden die verwendeten Architekturpatterns erläutert. Darauf folgt ein Kapitel zur Architektur des Backends in dem beschrieben wird, wie die Endpunkte der API gestaltet sind, welche Technologien verwendet werden und wie der innere Aufbau der API gestaltet ist. Anschließend werden die wichtigsten Prozesseabläufe dargestellt und schließlich, wie das Projekt auf einem Server aufgesetzt wird.
 
-% In diesem Kapitel wird auf die Struktur und Architektur der Rest-API eingegangen. Es wird zuerst beschrieben, wie die Endpunkte der API gestaltet sind und anschließend werden die verwendeten Technologien und der innere Aufbau beschrieben.
-
-\section{Funktionen}
-Das Programm soll eine Webanwendung sein auf der Nutzer mit einer benutzerfreundlichen Oberfläche verschiedene Eröffnungen betrachten und trainieren können. Es soll dabei als zentraler Ort dienen um Eröffnungen nachzuschauen und sein Gedächtnis aufzufrischen. Die Anwendung unterstützt Lernende, indem sie personalisiert Vorschläge macht, welche Eröffnung erneut abgefragt werden soll. Damit diese Anwendung umgesetzt werden kann sind die folgenden Funktionen notwendig.
+\section{Anforderungen}
+Das Programm soll eine Webanwendung sein auf der Nutzer mit einer benutzerfreundlichen Oberfläche verschiedene Eröffnungen betrachten und trainieren können. Es soll dabei als zentraler Ort dienen um Eröffnungen nachzuschauen und sein Gedächtnis aufzufrischen. Die Anwendung unterstützt Lernende, indem sie personalisiert Vorschläge gibt, welche Eröffnungen erneut geübt werden sollen. Es gelten für sie folgende funtkionale Anforderungen:
 
 \begin{itemize}
     \item Login: Ein Nutzer kann sich bei der Anwendung anmelden.
@@ -15,22 +13,23 @@ Das Programm soll eine Webanwendung sein auf der Nutzer mit einer benutzerfreund
     \item Lernmodus: Ein Nutzer kann eine Eröffnung auswählen und anschließend verschiedene Zugfolgen und Varianten der Eröffnung betrachten.
     \item Übungsmodus: Ein Nutzer kann eine Eröffnung auswählen und muss dann die Figuren einer Farbe nach der Zugfolge der Eröffnung bewegen. Der Computer spielt dabei die Züge des Gegners.
     \item Übungsmodus Hinweise: Während dem Üben hat ein Nutzer die Möglichkeit sich Hinweise geben zu lassen.
-    \item Übungsmodus Erweiterung: Ein Nutzer hat die Möglichkeit nach einer Eröffnung die mit oder ohne Dekomposition das Spiel zu Ende zu spielen gegen einen Computergegner.
+    \item Übungsmodus Erweiterung: Ein Nutzer hat die Möglichkeit nach einer Eröffnung mit oder ohne Dekomposition das Spiel zu Ende zu spielen gegen einen Computergegner.
     \item Vorschläge: Ein Nutzer bekommt Vorschläge welche Eröffnung trainiert werden soll.
     \item Statistik: Ein Nutzer kann sich Statistiken zu den Eröffnungen anschauen. Dazu zählt die Anzahl an richtigen und falschen Übungsdurchläufen. Diese Statistik wird auch zur Erstellung der Vorschläge verwendet.
 \end{itemize}
 
 \section{Patterns}
+In diesem Kapitel werden architekturübergreifende Patterns vorgestellt, die unabhängig vom gewählten Architekturstil eingesetzt werden können. Sie tragen dazu bei, den Code besser strukturiert, wartbar und erweiterbar zu gestalten. Dazu gehören das Repository Pattern und Dependency Injection. Beide Patterns werden im Folgenden anhand ihrer Funktion und ihres Einsatzes im Projekt erläutert.
 
 \subsection{Repository Pattern}
-Um die Datenspeicherung von dem Rest des Backends zu trennen wurde das Repository Pattern angewendet. Bei diesem Pattern wird eine Repository-Klasse erstellt, welche die Abfragelogik enthält. Nach außen werden nur abstrakte domänenspezifische Funktionen exponiert, wie zum Beispiel \lstinline{GetUser(id: int): User} oder lstinline{CreateUser(name: string, password: string)}. Die Implementierung dieser Klasse sorgt dann dafür, dass die entsprechenden Daten gefunden, aktualisiert oder hinzugefügt werden. Diese Abfragen können zum Beispiel komplexe SQL-Abfragen sein oder auch das Lesen einer Datei. In diesem Projekt wird jede Repository durch ein Interface definiert. Das ermöglicht es die jeweiligen Implementierungen mittels Dependency Injection zu ersetzen. \cite{evans_domain-driven_2004}
+Um die Datenspeicherung von dem Rest des Backends zu trennen wird das Repository Pattern angewendet. Bei diesem Pattern wird eine Repository-Klasse erstellt, welche die Abfragelogik enthält. Nach außen werden nur abstrakte domänenspezifische Funktionen exponiert, wie zum Beispiel \lstinline{GetUser(id: int): User} oder \lstinline{CreateUser(name: string, password: string)}. Die Implementierung dieser Klasse sorgt dann dafür, dass die entsprechenden Daten gefunden, aktualisiert oder hinzugefügt werden. Diese Abfragen können zum Beispiel komplexe SQL-Abfragen sein oder auch das Lesen einer Datei. In diesem Projekt wird jede Repository durch ein Interface definiert. Das ermöglicht es die jeweiligen Implementierungen mittels Dependency Injection zu ersetzen. \cite{evans_domain-driven_2004}
 \missingfigure{Beispieldiagramm}
 
 \subsection{Dependency Injection}
 \todo{TODO}
 
 \section{Architektur}
-Die Architektur ist in mehrere verschiedene Bestandteile aufgeteilt. Die zentrale Aufteilung besteht zwischen Backend und Frontend. In dieser Arbeit wird nur das Backend betrachtet. In \autoref{fig:components} sind die groben Bestandteile zu sehen. Das Frontend greift auf eine \ac{REST}-API zu.
+Die Architektur ist in mehrere verschiedene Bestandteile aufgeteilt. Die zentrale Aufteilung besteht zwischen Backend und Frontend. In dieser Arbeit wird nur das Backend betrachtet. In \autoref{fig:components} ist ein Überblick über die Architektur zu sehen. Das Frontend greift auf eine \ac{REST}-API zu.
 Die API ist wiederum aufgeteilt in die vier Bestandteile Eröffnungen, Nutzerdaten, Statistiken und die Schachengine.
 Die Bestandteile werden in den folgenden Unterkapiteln näher erklärt.
 % Der Bestandteil Eröffnungen ist für alles zuständig, wofür die Daten für Eröffnungen benötigt werden. Dazu gehört also das Lernen und Üben von Eröffnungen. Der Bestandteil Nutzerdaten ist notwendig um das Registrieren und den Login zu ermöglichen und die Statistiken sind nützlich um den Fortschritt der Spieler zu verfolgen und ermöglichen eine personalisierte Anpassung der Lernerfahrung. Die Schachengine ist notwendig für das Spielen gegen den Computer.
@@ -42,7 +41,7 @@ Die Bestandteile werden in den folgenden Unterkapiteln näher erklärt.
 \end{figure}
 
 \subsection{REST-API}
-Die API wird in C\# realisiert. Mit dem ASP.NET Core Framework wird eine controllerbasierte Web-API erstellt. Das bedeutet, dass die Controller und die Daten voneinander getrennt werden. Die Architektur ist ähnlich, wie eine Model View Controller Architektur, mit dem Unterschied, dass es keine View gibt. Die View wird separat im Frontend entwickelt. Die Controller und die Models sind im Backend vorhanden. Die Controller offenbaren die API-Endpunkte nach außen und die Models stellen die Daten dar. Für die vier unterschiedlichen Bereiche des Backends existiert jeweils ein dazugehöriger Controller. Jeder Controller repräsentiert dabei einen Wurzelendpunkt in der REST-API. Damit gibt es die vier Wurzelendpunkte \lstinline{/engine}, \lstinline{/openings}, \lstinline{/users} und \lstinline{/stats}.
+Die API wird in C\# realisiert. Mit dem ASP.NET Core Framework wird eine controllerbasierte Web-API erstellt. Das bedeutet, dass die Controller und die Daten voneinander getrennt werden. Die Architektur ist ähnlich, wie eine Model View Controller Architektur, mit dem Unterschied, dass es keine View gibt. Die View wird separat im Frontend entwickelt. Die Controller und die Models sind im Backend vorhanden. Die Controller offenbaren die API-Endpunkte nach außen und die Models modellieren die Daten. Für die vier unterschiedlichen Bereiche des Backends existiert jeweils ein dazugehöriger Controller. Jeder Controller repräsentiert dabei einen Wurzelendpunkt in der REST-API. Damit gibt es die vier Wurzelendpunkte \lstinline{/engine}, \lstinline{/openings}, \lstinline{/users} und \lstinline{/stats}.
 
 \subsection{Eröffnungen}
 Der Bestandteil Eröffnungen ist für alles zuständig, wofür die Daten der Eröffnungen benötigt werden. Dazu gehört also das Lernen und Üben von Eröffnungen. \autoref{fig:cd_opening} zeigt die dazugehörigen Klassen. Der OpeningController definiert alle Endpunkte unter der URI \lstinline{/openings}. Jede public Funktion der Klasse ist in diesem Fall für einen Endpunkt zuständig. Die Zuteilung ist folgendermaßen gestaltet:
@@ -54,7 +53,7 @@ Der Bestandteil Eröffnungen ist für alles zuständig, wofür die Daten der Er�
   \item \lstinline|GET /openings/{id}/next-move| $\rightarrow$ GetNextMove
 \end{itemize}
 
-Opening ist die Model Klasse. Sei enthält alle benötigten Daten zu einer Eröffnung. Die API gibt bei einer Anfrage entweder Instanzen der Klassen OpeningOverview oder OpeningMove zurück, die einen Teil der Informationen von Opening besitzen. Dadurch wird Bandbreite gespart und der Client bekommt nur die Daten, die er auch benötigt. Der Datenspeicher ist eine TSV-Datei, die von dem Lichess Datensatz abgeleitet wurde. \todo{genauer beschreiben} Er wird über das Repository Pattern abgefragt. IOpeningRepository enthält also alle Funtionen, um die Daten abzufragen und zu strukturieren, wie sie der OpeningController benötigt. Die OpeningRepository verwendet wiederum den IOpeningReader, welcher das Lesen der TSV-Datei abstrahiert. Auf diese Weise kann die TSV-Datei ohne viel Aufwand durch eine CSV- oder JSON-Datei ausgetauscht werden. Dafür muss nur eine entsprechende Implementierung für den IOpeningReader erstellt werden.
+Opening ist die Model Klasse. Sei enthält alle benötigten Daten zu einer Eröffnung. Die API gibt bei einer Anfrage entweder Instanzen der Klassen OpeningOverview oder OpeningMove zurück, die einen Teil der Informationen von Opening besitzen. Dadurch wird Bandbreite gespart und der Client bekommt nur die Daten, die er auch benötigt. Der Datenspeicher ist eine TSV-Datei, die von dem Lichess Datensatz abgeleitet wurde. \todo{genauer beschreiben} Er wird über das Repository Pattern abgefragt. IOpeningRepository enthält also alle Funtionen, um die Daten abzufragen und zu strukturieren, wie sie der OpeningController benötigt. Die OpeningRepository verwendet wiederum den IOpeningReader, welcher das Lesen der TSV-Datei abstrahiert. Auf diese Weise kann die TSV-Datei ohne viel Aufwand durch eine CSV- oder JSON-Datei ausgetauscht werden. Dafür muss lediglich eine entsprechende Implementierung für den IOpeningReader erstellt werden.
 
 \begin{figure}[h]
   \includegraphics[width=\linewidth]{images/diagrams/opening.png}
@@ -62,7 +61,7 @@ Opening ist die Model Klasse. Sei enthält alle benötigten Daten zu einer Eröf
   \label{fig:cd_opening}
 \end{figure}
 
-\section{SQL-Datenbank}
+\subsection{SQL-Datenbank}
 Die dynamischen Daten werden in einer relationalen SQL-Datenbank gespeichert. Dazu zählen die Logindaten der Nutzer und die Nutzerstatistiken zu den Eröffnungen. Dafür existieren die zwei Tabellen User und TrainingResult, welche nachfolgend in Relationenschreibweise notiert sind, wobei der Primärschlüssel fett gedruckt ist und der Fremdschlüssel kursiv:
 
 \begin{itemize}
@@ -72,9 +71,19 @@ Die dynamischen Daten werden in einer relationalen SQL-Datenbank gespeichert. Da
 
 Die Usertabelle existiert um das Einloggen und Registrieren zu ermöglichen. Mit einem Benutzernamen und einem Passwort kann sich ein Nutzer anmelden. Der Name besitzt aus diesem Grund einen Unique Constriant. Das Passwort wird in gehashter Form gespeichert. Für die Statistiken werden die Ergebnisse der Trainings gespeichert. Es wird gespeichert, wer das Training ausgeführt hat, für welche Eröffnung das Training ist, wie viele Fehler gemacht wurden, wie viele Hinweise benötigt wurden und zu welchem Zeitpunkt das Training ausgeführt wurde. OpeningId ist in diesem Fall kein Fremdschlüssel, da die Eröffnungen nicht in der relationalen Datenbank abgespeichert sind, sondern in einer separaten TSV-Datei. Mithilfe dieser Daten können durch SQL-Abfragen beliebige Statistiken erstellt werden.
 
-Für den Datenbankzugriff wird ein \ac{ORM} verwendet. Microsoft bietet in C\# dafür das Entity Framework Core an. Der Vorteil eines \ac{ORM}s ist, dass es den Zugriff auf die Datenbank nochmal abstrahiert. Zwischen den unterschiedlichen SQL-Datenbanken gibt es einige Unterschiede, auf die geachtet werden muss, beim Schreiben von reinem SQL. Ein \ac{ORM} abstrahiert diese Unterschiede, indem der Zugriff und die Tabellenstruktur in der Sprache des ORM-Frameworks beschrieben wird, in diesem Fall C\#. Ein weiterer Vorteil ist, dass \ac{ORM}s vor einigen Fehlern, wie zum Beispiel Query-Injection schützen. Das Entity Framework Core besitzt zudem ein robustes System für Datenbankmigrationen. So ist es möglich Tabellenstrukturen auch im Nachhinein zu ändern und die Datenbanken mit geringem Risiko zu migrieren. Mit dem Entity Framework Core kann man zwischen vielen SQL-Datenbanken wählen. Für dieses Projekt wird PostgreSQL verwendet, da sie weit verbreitet ist und bekannt für ihre Stabilität.
+Für den Datenbankzugriff wird ein \ac{ORM} verwendet. Microsoft bietet in C\# dafür das Entity Framework Core an. Der Vorteil eines \ac{ORM}s ist, dass es den Zugriff auf die Datenbank abstrahiert. Zwischen verschiedenen SQL-Datenbanken gibt es einige Unterschiede, auf die geachtet werden muss, beim Schreiben von reinem SQL. Ein \ac{ORM} abstrahiert diese Unterschiede, indem der Zugriff und die Tabellenstruktur in der Sprache des ORM-Frameworks beschrieben wird, in diesem Fall C\#. Ein weiterer Vorteil ist, dass \ac{ORM}s vor einigen Fehlern, wie zum Beispiel Query-Injection schützen. Das Entity Framework Core besitzt zudem ein robustes System für Datenbankmigrationen. So ist es möglich Tabellenstrukturen auch im Nachhinein zu ändern und die Datenbanken mit geringem Risiko zu migrieren. Mit dem Entity Framework Core kann man zwischen vielen SQL-Datenbanken wählen. Für dieses Projekt wird PostgreSQL verwendet, da sie weit verbreitet ist und bekannt für ihre Stabilität.
 
-\section{Laufzeitsicht Vorläufig}
+\subsection{Nutzerdaten}
+\todo{TODO}
+
+\subsection{Statistiken}
+\todo{TODO}
+
+\subsection{Scahchengine}
+\todo{TODO}
+
+\section{Abläufe}
+\todo{Vorläufig}
 Um die Kernfeatures der Anwendung zu ermöglichen werden die folgenden Endpunkte unter \lstinline{/openings} implementiert.
 
 \begin{itemize}
@@ -97,3 +106,5 @@ Mit ihnen kann man den Lern- und Übungsmodus umsetzen. Der Ablauf des Lernmodus
     \caption{Ablauf Übungsmodus}
     \label{fig:sd_opening_training}
 \end{figure}
+
+\section{Aufsetzen (Deployment)}
