@@ -219,15 +219,48 @@ Für diesen Anwendungsfall werden häufig \ac{REST}ful APIs erstellt. \ac{REST} 
 
 \subsubsection{REST-Prinzipien}
 
-REST APIs sind Client-Server-Architekturen. Dahinter steckt das Prinzip der Separierung von Anliegen (separation of concerns). Das hat den Vorteil, dass der Client und Server gegenseitig nichts über ihre Technologien und Implementierungen wissen müssen und separat entwickelt werden können. Auch bei diesem Projekt werden Client und Server separat entwickelt.
+REST-APIs sind Client-Server-Architekturen. Dahinter steckt das Prinzip der Separierung von Anliegen (separation of concerns). Das hat den Vorteil, dass der Client und Server gegenseitig nichts über ihre Technologien und Implementierungen wissen müssen und separat entwickelt werden können. Auch bei diesem Projekt werden Client und Server separat entwickelt.
 
-Ein Kernaspekt von REST APIs ist, dass sie zustandslos sind. Der Server muss sich den Zustand des Clients nicht merken. Stattdessen liegt es in der Verantwortung des Clients, bei jeder Anfrage den aktuellen Kontext mitzusenden. Das ist auch der Fall bei mehrteiligen Anfragen. Das verbessert die Zuverlässigkeit, da es einfacher ist, aus Fehlerzuständen wieder zurückezukommen. Die Skalierbarkeit ist auch verbessert, da die Aufgaben des Servers vereinfacht sind und Load Balancer einfacher zu implementieren sind.
+Ein Kernaspekt von REST-APIs ist, dass sie zustandslos sind. Der Server muss sich den Zustand des Clients nicht merken. Stattdessen liegt es in der Verantwortung des Clients, bei jeder Anfrage den aktuellen Kontext mitzusenden. Das ist auch der Fall bei mehrteiligen Anfragen. Das verbessert die Zuverlässigkeit, da es einfacher ist, aus Fehlerzuständen wieder zurückezukommen. Die Skalierbarkeit ist auch verbessert, da die Aufgaben des Servers vereinfacht sind und Load Balancer einfacher zu implementieren sind.
 
 Ein weiteres Rest-Prinzip ist das Caching. Daten einer Antwort werden implizit oder explizit als chachebar oder nicht cachebar markiert. Ein Client kann dann cachebare Antworten wiederverwenden für spätere Äquivalente Anfragen. Das ermöglicht schnellere Antwortzeiten und kürzere Latenzen. Es kann allerdings die Zuverlässigkeit beeinträchtigen.
 
 REST-APIs sind in hierarchischen Schichten organisiert. Eine einzelne Schichten sind voneinander gekapselt. Das reduziert die Komplexität des Systems, da verschiedene Bestandteile separat betrachtet werden können. Die Schichten können auch auf verschiedene Prozesse oder Systeme verteilt sein. An den Schichtgrenzen können gemeinsame Caches genutzt werden und es können Sicherheitsregeln zwischen den Schichten definiert werden. Das kann die Sicherheit des Systems erhöhen. Auf diese Weise Rate Limiting und Load Balancing implementiert werden. Ein Nachteil ist, dass die Schichtenarchitektur Overhead hinzufügt und die Latenz erhöhen kann. Dass kann allerdings durch die Verwendung von Chaches ausgeglichen werden.
 
-Eine REST API hat eine einheitliche Schnittstelle. Das hilft dabei die Kommunikation zwischen den Komponenten zu definieren. Es entkoppelt die Kommunikation von der Architektur. Jede Ressource hat eine eindeutige URI über die man auf sie zugreifen kann. Das Frontend muss nicht wissen, wie die Daten abgespeichert sind. Sie werden mit einem portablen Format, wie XML oder JSON verschickt.
+Eine REST-API hat eine einheitliche Schnittstelle. Das hilft dabei die Kommunikation zwischen den Komponenten zu definieren. Es entkoppelt die Kommunikation von der Architektur. Jede Ressource hat eine eindeutige URI über die man auf sie zugreifen kann. Das Frontend muss nicht wissen, wie die Daten abgespeichert sind. Sie werden mit einem portablen Format, wie XML oder JSON verschickt.
 
-Eine optionale Anforderung an REST APIs ist code-on-demand. Das beschreibt die Möglichkeit den Client durch das Herunterladen von Applets oder Skripten zu erweitern.
-\cite{masse_rest_2012}\cite{de_api_2017}
+Eine optionale Anforderung an REST-APIs ist code-on-demand. Das beschreibt die Möglichkeit den Client durch das Herunterladen von Applets oder Skripten zu erweitern.
+\cite{fielding_architectural_2000}\cite{de_api_2017}
+
+\subsubsection{URI Design}
+In REST-APIs werden Ressourcen über \ac{URI}s identifiziert. Sie bestehen aus dem Protokoll, der Webadresse und darauffolgend einem Pfad, z. B. \lstinline{https://api.example.com/path}. Für REST-APIs gibt es einige Regeln und Best-Practices, wie der Pfad von \ac{URI}s gestaltet wird.
+
+Die erste Regel ist, dass der Schrägstrich dazu genutzt werden soll, eine hierarchische Struktur darzustellen. Zum Beispiel könnten Eröffnungen folgendermaßen angordnet sein: \lstinline{/openings/queens-gambit}. Das Queen's Gambit ist eine Eröffnung, deshalb ist sie unter der Ressource \lstinline{openings} platziert.
+
+In dem vorherigen Beispiel sind auch weitere Regeln zu sehen. Um die Lesbarkeit zu erhöhen, werden Bindestriche verwendet. Unterstriche werden vermieden, da sie in Links oft schlecht oder gar nicht sichtbar sind. Außerdem sollen Pfade ausschließlich Kleinbuchstaben enthalten, um Verwirrung zu vermeiden.
+
+In REST-APIs gibt es verschiedene vier verschiedene Arten von Daten, die ihre eigenen Namenskonventionen besitzen.
+
+Dokumente (documents) sind einzelne Ressourcen, wie zum Beispiel eine einzelne Objektinstanz oder ein Datenbankeintrag. Diese werden mit einem Substantiv oder einer Nominalphrase benannt. Auch das ist in dem Queen's Gambit Beispiel zu sehen. \lstinline{queens-gambit} ist hier das Substantiv.
+
+Sammlungen (collections) sind Verzeichnisse von Ressourcen, die durch den Server verwaltet werden. Clients können neue Elemente für diese Verzeichnisse vorschlagen, der Server entscheidet, ob das Element hinzugefügt wird. Eine Sammlung wird mit einem Substantiv im Plural oder einer Nominalphrase benannt. Ein Beispiel ist der Pfad \lstinline{/openings}, welcher eine Sammlung von Eröffnungen enthält.
+
+Ein Speicher (store) ist ein Speicherort, der vom Client verwaltet wird. Ein Anwendungsfall kann ein Client sein, der die Dokumentenressource \lstinline{queens-gambit} in seinen Speicher \lstinline{favorites} speichert. \lstinline{PUT /users/1234/favorites/queens-gambit}
+
+Controller stellen ausführbare Funktionen mit Parametern und Rückgabewerten dar. Aktionen, die sich nicht den Aktionen Erstellen (create), Empfangen (receive), Aktualisieren (update), oder Löschen (delete), kurz CRUD, zuordnen lassen, werden darunter gezählt. Cotroller sind meistens das letzte Element in der Hierarchie und besitzen keine Kindelemente. Benannt werden sie mit einem Verb oder einer Verbalphrase. Ein Beispiel wäre eine Controllerressource, die es einem Client erlaubt eine Meldung erneut zu senden: \lstinline{/alerts/2345/resend}.
+
+\ac{URI}s sollten keine CRUD-Funktionen in ihren Namen verwenden. Stattdessen sollten HTTP Methoden zeigen, welche CRUD-Operation ausgeführt wird. Die CRUD-Funktionen einer Userressource können folgendermaßen aussehen:
+
+\begin{itemize}
+  \item Create user $\rightarrow$ \lstinline{POST oder PUT /users}
+  \item Receive user $\rightarrow$ \lstinline{GET /users}
+  \item Update user $\rightarrow$ \lstinline{PATCH /users/2345}
+  \item Delete user $\rightarrow$ \lstinline{DELETE /users/3423}
+\end{itemize}
+
+In \ac{URI}s kann es Pfadsegmente geben die statisch oder dynamisch sind. Statische Pfadsegmente sind unveränderliche Namen, die durch einen Designer im Voraus festgelegt werden. Dynamische Pfadsegmente sind veränderlich und erfüllen meist den Zweck eines Identifikators, der aus einer Sammlung oder einem Speicher ein Element identifiziert. Im folgenden Beispiel ist das Pfadsegment \lstinline{openings} statisch und das Segment \lstinline|{id}| ist dynamisch und wird vor der Ausführung durch eine konkrete Eröffnungs-ID ersetzt: \lstinline|/openings/{id}|
+
+Nach dem Pfad können noch weitere Query-Parameter definiert werden. Diese sind dazu da um Sammlungen oder Speicher zu filtern. Folgende Query könnte genutzt werden um alle Eröffnungen zu bekommen, die zur Familie Queen's Gambit gehören: \lstinline{GET /openings?family=queens-gambit}.
+
+\cite{masse_rest_2012}
+
