@@ -213,25 +213,21 @@ Die Kommunikation findet bei diesem Protokoll über die Standardeingabe und Stan
 \cite{stefan_meyer-kahlen_universal_2025}
 
 \subsection{Web-Schnittstellen}
-Die Benutzerschnittstelle für dieses Projekt soll als Weboberfläche realisiert werden. Dafür wird es in zwei Bestandteile aufgeteilt, das Backend und das Frontend. Damit diese Bestandteile miteinander kommunizieren können, ist es notwendig eine \ac{API} zur Kommunikation zu entwickeln. 
+Die Benutzerschnittstelle für dieses Projekt soll als Weboberfläche realisiert werden. Dafür wird es in zwei Bestandteile aufgeteilt, das Backend und das Frontend. Damit diese Bestandteile miteinander kommunizieren können, ist es notwendig eine \ac{API} zur Kommunikation zu entwickeln.
 
-Für diesen Anwendungsfall werden häufig \ac{REST}ful APIs erstellt. Diese Art von APIs verwendet HTTP um zwei Systeme miteinader kommunizieren zu lassen. Damit eine API als \ac{REST}ful bezeichnet werden kann müssen einige Kriterien erfüllt sein.
-\cite{de_api_2017}
+Für diesen Anwendungsfall werden häufig \ac{REST}ful APIs erstellt. \ac{REST} ist eine Architektur, die HTTP verwendet, um zwei Systeme miteinader kommunizieren zu lassen. Damit eine API als \ac{REST}ful bezeichnet werden kann, müssen einige Prinzipien oder auch Einschränkungen eingehalten werden.
+
+\subsubsection{REST-Prinzipien}
+
+REST APIs sind Client-Server-Architekturen. Dahinter steckt das Prinzip der Separierung von Anliegen (separation of concerns). Das hat den Vorteil, dass der Client und Server gegenseitig nichts über ihre Technologien und Implementierungen wissen müssen und separat entwickelt werden können. Auch bei diesem Projekt werden Client und Server separat entwickelt.
+
+Ein Kernaspekt von REST APIs ist, dass sie zustandslos sind. Der Server muss sich den Zustand des Clients nicht merken. Stattdessen liegt es in der Verantwortung des Clients, bei jeder Anfrage den aktuellen Kontext mitzusenden. Das ist auch der Fall bei mehrteiligen Anfragen. Das verbessert die Zuverlässigkeit, da es einfacher ist, aus Fehlerzuständen wieder zurückezukommen. Die Skalierbarkeit ist auch verbessert, da die Aufgaben des Servers vereinfacht sind und Load Balancer einfacher zu implementieren sind.
+
+Ein weiteres Rest-Prinzip ist das Caching. Daten einer Antwort werden implizit oder explizit als chachebar oder nicht cachebar markiert. Ein Client kann dann cachebare Antworten wiederverwenden für spätere Äquivalente Anfragen. Das ermöglicht schnellere Antwortzeiten und kürzere Latenzen. Es kann allerdings die Zuverlässigkeit beeinträchtigen.
+
+REST-APIs sind in hierarchischen Schichten organisiert. Eine einzelne Schichten sind voneinander gekapselt. Das reduziert die Komplexität des Systems, da verschiedene Bestandteile separat betrachtet werden können. Die Schichten können auch auf verschiedene Prozesse oder Systeme verteilt sein. An den Schichtgrenzen können gemeinsame Caches genutzt werden und es können Sicherheitsregeln zwischen den Schichten definiert werden. Das kann die Sicherheit des Systems erhöhen. Auf diese Weise Rate Limiting und Load Balancing implementiert werden. Ein Nachteil ist, dass die Schichtenarchitektur Overhead hinzufügt und die Latenz erhöhen kann. Dass kann allerdings durch die Verwendung von Chaches ausgeglichen werden.
 
 Eine REST API hat eine einheitliche Schnittstelle. Das hilft dabei die Kommunikation zwischen den Komponenten zu definieren. Es entkoppelt die Kommunikation von der Architektur. Jede Ressource hat eine eindeutige URI über die man auf sie zugreifen kann. Das Frontend muss nicht wissen, wie die Daten abgespeichert sind. Sie werden mit einem portablen Format, wie XML oder JSON verschickt.
-\cite{de_api_2017}
 
-REST APIs sind Client-Server-Architekturen. Das hat den Vorteil, dass der Client und Server gegenseitig nichts über ihre Technologien und Implementierungen wissen müssen. Bei diesem Projekt werden Client und Server separat voneinander entwickelt. Das ist möglich durch die Client-Server-Architektur
-\cite{de_api_2017}
-
-Ein Kernaspekt von REST APIs ist, dass sie Zustandslos sind. Der Server muss sich den Zustand des Clients nicht merken. Stattdessen liegt es in der Verantwortung des Clients, bei jeder Anfrage den aktuellen Kontext mitzusenden. Das ist auch der Fall bei mehrteiligen Anfragen. Das vereinfacht die Aufgaben des Servers und Load Balancer sind auch einfacher zu implementieren.
-\cite{de_api_2017}
-
-Das Caching ist auch ein Teil von REST APIs. Der Server kann entscheiden, ob eine Anfrage gecacht werden kann oder nicht. Der Client kann dann entscheiden, ob er die gecachte Antwort verwenden will. Das ermöglicht schnellere Antwortzeiten und kürzere Latenzen.
-\cite{de_api_2017}
-
-Bei REST APIs ist es möglich Zwischenkomponenten zwischen Client und Server zu platzieren. Das kann die Sicherheit des Systems erhöhen. Auf diese Weise kann auch Caching, Rate Limiting und Load Balancing implementiert werden.
-\cite{de_api_2017}
-
-Eine optionale Anforderung an REST APIs ist code-on-demand. Das beschreibt das Vorgehen, dass der Webserver ausführbare Programme an den Client schickt.
-\cite{de_api_2017}
+Eine optionale Anforderung an REST APIs ist code-on-demand. Das beschreibt die Möglichkeit den Client durch das Herunterladen von Applets oder Skripten zu erweitern.
+\cite{masse_rest_2012}\cite{de_api_2017}
