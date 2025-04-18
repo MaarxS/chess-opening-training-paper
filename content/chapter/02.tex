@@ -247,7 +247,9 @@ Sammlungen (collections) sind Verzeichnisse von Ressourcen, die durch den Server
 
 Ein Speicher (store) ist ein Speicherort, der vom Client verwaltet wird. Ein Anwendungsfall kann ein Client sein, der die Dokumentenressource \lstinline{queens-gambit} in seinen Speicher \lstinline{favorites} speichert. \lstinline{PUT /users/1234/favorites/queens-gambit}
 
-Controller stellen ausführbare Funktionen mit Parametern und Rückgabewerten dar. Aktionen, die sich nicht den Aktionen Erstellen (create), Empfangen (receive), Aktualisieren (update), oder Löschen (delete), kurz CRUD, zuordnen lassen, werden darunter gezählt. Cotroller sind meistens das letzte Element in der Hierarchie und besitzen keine Kindelemente. Benannt werden sie mit einem Verb oder einer Verbalphrase. Ein Beispiel wäre eine Controllerressource, die es einem Client erlaubt eine Meldung erneut zu senden: \lstinline{/alerts/2345/resend}.
+Controller stellen ausführbare Funktionen mit Parametern und Rückgabewerten dar.
+Darunter fallen Aktionen, die sich nicht eindeutig den klassischen CRUD-Operationen – also Erstellen (Create), Empfangen (Read), Aktualisieren (Update) oder Löschen (Delete) – zuordnen lassen.
+Cotroller sind meistens das letzte Element in der Hierarchie und besitzen keine Kindelemente. Benannt werden sie mit einem Verb oder einer Verbalphrase. Ein Beispiel wäre eine Controllerressource, die es einem Client erlaubt eine Meldung erneut zu senden: \lstinline{/alerts/2345/resend}.
 
 \ac{URI}s sollten keine CRUD-Funktionen in ihren Namen verwenden. Stattdessen sollten HTTP Methoden zeigen, welche CRUD-Operation ausgeführt wird. Die CRUD-Funktionen einer Userressource können folgendermaßen aussehen:
 
@@ -263,4 +265,27 @@ In \ac{URI}s kann es Pfadsegmente geben die statisch oder dynamisch sind. Statis
 Nach dem Pfad können noch weitere Query-Parameter definiert werden. Diese sind dazu da um Sammlungen oder Speicher zu filtern. Folgende Query könnte genutzt werden um alle Eröffnungen zu bekommen, die zur Familie Queen's Gambit gehören: \lstinline{GET /openings?family=queens-gambit}.
 
 \cite{masse_rest_2012}
+
+\subsubsection{Authentifizierung}
+Authentifizierung ist der Prozess, bei dem die Identität eines Nutzers verifiziert wird.
+Dieser Prozess ist in vielen APIs wichtig und muss sinnvoll implementiert sein. Eine unsichere Authentifizierung ist eine große Sicherheitslücke, die es Dritten ermöglicht Zugriff zu Ressourcen zu erlangen, die ihnen nicht zustehen. In der Schachanwendung soll die Nutzung personalisiert werden, daher werden auch nutzerbezogene Daten erfasst. Einen Nutzer könnte zum Beispiel interessieren, welche Schacheröffnungen er bereits oft geübt hat. Außerdem ist es sinnvoll rechenintensive Operationen nur authentifizierten Nutzern zur Verfügung zu stellen. Das reduziert die Wahrscheinlichkeit einer DoS Attacke zu erliegen, bei der durch viele unauthentifizierte Anfragen der Server überlastet wird. Zum Beispiel ist das Verwenden einer Schachengine sehr rechenintensiv und sollte nur durch authentifizierte Nutzer entstehen.
+
+Authentifizierung lässt sich in drei Kategorien einteilen:
+\begin{itemize}
+    \item Wissensbasierte Authentifizierung erfolgt durch etwas, dass man weiß, wie zum Beispiel ein Passwort.
+    \item Besitzbasierte Authentifizierung erfolgt durch etwas, dass man besitzt, wie zum Beispiel einen Schlüssel.
+    \item Biometrische Authentifizierung erfolgt durch etwas, dass man ist, wie zum Beispiel wie der Fingerabdruck aussieht.
+\end{itemize}
+
+Auf Webseiten findet die erste Authentifizierung meistens wissensbasiert mithilfe eines Passworts statt. Bei der Erstellung des Accounts muss ein Nutzer ein Passwort angeben, das er bei erneutem Anmelden wieder angeben muss.
+Um die Sicherheit dieses Verfahrens zu gewährleisten, darf die Übertragung des Passworts ausschließlich über eine verschlüsselte Verbindung (z. B. HTTPS mit TLS) erfolgen. Außerdem dürfen Passwörter nicht im Klartext gespeichert werden, sondern müssen sichere Hashfunktionen umgewandelt werden. Diese Funktionen produzieren bei gleicher Eingabe die gleiche Ausgabe, es kann allerdings nicht durch die Ausgabe auf das Passwort zurückgeschlossen werden. Noch sicherer werden diese Funktionen, wenn vor der Anwendung ein Salt hinzugefügt wird, also eine zufällige Kombination von Zeichen.
+
+Passwörter sollten nicht bei jeder Anfrage geschickt werden, da jede Anfrage, in der ein Passwort geschickt wird auch ein gewisses Risiko ist. Das Überprüfen von Passwörtern mit einer Hashfunktion ist auch aufwendig und würde den Webserver verlangsamen. Deshalb existiert die tokenbasierte Authentifizierung. Dafür wird am Anfang ein Login mit Passwort ausgeführt und der Client bekommt daraufhin ein Token. Dieses Token ist ein zufällig generierter String, den nur der Server und der Client kennt. Der Client kann sich also damit wissensbasiert authentifizieren. 
+
+Für die genaue Verwendung von Tokens gibt es mehrere Möglichkeiten. Eine Möglichkeit ist es das Token auf der Serverseite in einer Datenbank abzulegen, sodass dieser einen Client wiedererkennen kann. Um ein Token zu deaktivieren kann man es wieder aus der Datenbank löschen. Auf dem Client kann man das Token in einem Cookie speichern und ihn auffordern das Token bei zukünftigen Anfragen zu verwenden. Die Technologie ist in den aktuellen Browsern gut unterstützt und daher auch leicht zu implementieren. Nachteilhaft bei diesem Vorgehen ist, dass der Server in diesem Fall Zustände speichern muss. Das wiederspricht dem Prinzip von REST-APIs, die per Definition zustandslos sein sollen. Die Überpüfung der Token mit einer Datenbank ist skaliert bei sehr vielen Nutzern auch nicht so gut und ist anfällig für Timing Attacken. Das bedeutet, dass ein Angreifer Token herausfinden kann anhand dessen, wie lange eine Anfrage benötigt.
+
+Das Problem der Timing Attacken kann gelöst indem die Nachrichten durch einen \ac{MAC} ergänzt werden. Das Token erhält also zusätzlich einen Code, der bestätigt, dass er von dem Server erstellt wurde. Dafür kann die \ac{HMAC}-Funktion genutzt werden. Diese Funktion erstellt unter Verwendung der Daten und eines geheimen Schlüssels den \ac{MAC}. Er kann also nur erstellt werden, wenn man den Schlüssel kennt und jede Veränderung der Daten führt zur Ungültigkeit des \ac{MAC}. Die Funktion funktioniert nicht nur mit Tokens, sondern mit beliebigen Daten. Im Endeffekt benötigt man auch keine Tokens mehr und die Informationen über die Berechtigungen können direkt an den Client übergeben, da sie vor Bearbeitung geschützt sind. Auf diese Weise funktionieren auch \ac{JWT}. Ein JSON-Objekt wird in Base64 umgewandelt und mithilfe einer \ac{HMAC}-Funktion signiert. Mit der selben Funktion kann bei späteren Anfragen getestet werden, ob die Daten echt sind.
+\cite{madden_api_2020}\cite{software_development_engineering_advisor_at_fiserv_usa_architecting_2023}
+
+% Hier kann man noch mehr ins Detail gehen, wenn man will.
 
