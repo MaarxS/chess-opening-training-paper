@@ -3,7 +3,7 @@
 package "REST-API" as API {
   [Schachengine]
   [Eroeffnungen]
-  [Nutzerdaten]
+  [Authentifizierung]
   [Statistiken]
 }
 [UCI-Engine] as uci
@@ -13,12 +13,12 @@ database "SQL-Datenbank" as sql
 Frontend --> API
 API --> Schachengine
 API --> Eroeffnungen
-API --> Nutzerdaten
+API --> Authentifizierung
 API --> Statistiken
 
 Schachengine --> uci
 Eroeffnungen --> liste
-Nutzerdaten --> sql
+Authentifizierung --> sql
 Statistiken --> sql
 
 @enduml

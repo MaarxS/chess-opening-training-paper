@@ -1,0 +1,24 @@
+@startuml
+class UserParams {
+    + name: string
+    + password: string
+}
+class User {
+    + id: int
+    + name: string
+    + passwordHash: string
+}
+class UserController {
+    + CreateUser(newUser: UserParams)
+    + Login(loginRequest: UserParams): string
+    - GenerateJWT(user: User): string
+}
+interface IUserRepository {
+    + CreateUser(name: string, password: string): User
+    + GetUser(name: string): User?
+    + VerifyPassword(user: User, password: string): bool
+}
+
+UserController --> IUserRepository
+IUserRepository <|-- UserRepository
+@enduml

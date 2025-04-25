@@ -41,10 +41,13 @@ Die Bestandteile werden in den folgenden Unterkapiteln näher erklärt.
 \end{figure}
 
 \subsection{REST-API}
-Die API wird in C\# realisiert. Mit dem ASP.NET Core Framework wird eine controllerbasierte Web-API erstellt. Das bedeutet, dass die Controller und die Daten voneinander getrennt werden. Die Architektur ist ähnlich, wie eine Model View Controller Architektur, mit dem Unterschied, dass es keine View gibt. Die View wird separat im Frontend entwickelt. Die Controller und die Models sind im Backend vorhanden. Die Controller offenbaren die API-Endpunkte nach außen und die Models modellieren die Daten. Für die vier unterschiedlichen Bereiche des Backends existiert jeweils ein dazugehöriger Controller. Jeder Controller repräsentiert dabei einen Wurzelendpunkt in der REST-API. Damit gibt es die vier Wurzelendpunkte \lstinline{/engine}, \lstinline{/openings}, \lstinline{/users} und \lstinline{/stats}.
+Die API wird in C\# realisiert. Mit dem ASP.NET Core Framework wird eine controllerbasierte Web-API erstellt. Das bedeutet, dass die Controller und die Daten voneinander getrennt werden. Die Architektur ist ähnlich, wie eine Model View Controller Architektur, mit dem Unterschied, dass es keine View gibt. Die View wird separat im Frontend entwickelt. Die Controller und die Models sind im Backend vorhanden. Die Controller offenbaren die API-Endpunkte nach außen und die Models modellieren die Daten. Für die vier unterschiedlichen Bereiche des Backends existiert jeweils ein dazugehöriger Controller. Jeder Controller repräsentiert dabei einen Wurzelendpunkt in der REST-API. Damit gibt es die vier Wurzelendpunkte \lstinline{/engine}, \lstinline{/openings}, \lstinline{/users} und \lstinline{/stats}. Ein Controller-Endpunkt gibt immer ein \lstinline{IActionResult} zurück. Wenn in der Implementierung ein anderer Datentyp zurückgegeben wird, kümmert sich das Framework darum, dass er umgewandelt wird. Das resultiert in einem \lstinline{OkObjektResult} mit dem Statuscode 200 und dem zurückgegebenen Objekt als Wert. Dieses Objekt wird vor der Antwort in JSON umgewandelt. Um Verständlichkeit der nachfolgenden Klassendiagramme zu erhöhen wird nur der Datentyp dieses Objekts dargestellt. In manchen Fällen ist es auch möglich, dass statt des Datentyps eine Antwort mit Fehlercode und anderen Daten übergeben wird. Das wird an den entsprechenden Stellen beschrieben und ist auch in der OpenAPI Dokumentation zu sehen.
+% TODO im Code umsetzen
 
 \subsection{Eröffnungen}
-Der Bestandteil Eröffnungen ist für alles zuständig, wofür die Daten der Eröffnungen benötigt werden. Dazu gehört also das Lernen und Üben von Eröffnungen. \autoref{fig:cd_opening} zeigt die dazugehörigen Klassen. Der OpeningController definiert alle Endpunkte unter der URI \lstinline{/openings}. Jede public Funktion der Klasse ist in diesem Fall für einen Endpunkt zuständig. Die Zuteilung ist folgendermaßen gestaltet:
+Der Bestandteil Eröffnungen ist für alles zuständig, wofür die Daten der Eröffnungen benötigt werden. Dazu gehört also das Lernen und Üben von Eröffnungen. \autoref{fig:cd_opening} zeigt die dazugehörigen Klassen. Der OpeningController definiert alle Endpunkte unter der URI \lstinline{/openings}.
+Die tatsächlichen Rückgabewerte des
+Jede public Funktion der Klasse ist in diesem Fall für einen Endpunkt zuständig. Die Zuteilung ist folgendermaßen gestaltet:
 
 \begin{itemize}
   \item \lstinline|GET /openings| $\rightarrow$ GetOpenings
@@ -73,16 +76,35 @@ Die Usertabelle existiert um das Einloggen und Registrieren zu ermöglichen. Mit
 
 Für den Datenbankzugriff wird ein \ac{ORM} verwendet. Microsoft bietet in C\# dafür das Entity Framework Core an. Der Vorteil eines \ac{ORM}s ist, dass es den Zugriff auf die Datenbank abstrahiert. Zwischen verschiedenen SQL-Datenbanken gibt es einige Unterschiede, auf die geachtet werden muss, beim Schreiben von reinem SQL. Ein \ac{ORM} abstrahiert diese Unterschiede, indem der Zugriff und die Tabellenstruktur in der Sprache des ORM-Frameworks beschrieben wird, in diesem Fall C\#. Ein weiterer Vorteil ist, dass \ac{ORM}s vor einigen Fehlern, wie zum Beispiel Query-Injection schützen. Das Entity Framework Core besitzt zudem ein robustes System für Datenbankmigrationen. So ist es möglich Tabellenstrukturen auch im Nachhinein zu ändern und die Datenbanken mit geringem Risiko zu migrieren. Mit dem Entity Framework Core kann man zwischen vielen SQL-Datenbanken wählen. Für dieses Projekt wird PostgreSQL verwendet, da sie weit verbreitet ist und bekannt für ihre Stabilität.
 
-\subsection{Nutzerdaten}
-\todo{TODO}
+\subsection{Authentifizierung}
+Wie bereits in \autoref{cp:auth} beschrieben, wird auch in diesem Projekt eine Authentifizierung der Nutzer benötigt zum einen, um nutzerbezogene Statistiken zu sammeln und eine personalisierte Erfahrung zu bieten und zum anderen, um den Zugriff auf die Schachengine zu begrenzen. \autoref{fig:cd_auth} beschreibt die Klassen, die für die Authentifizierung notwendig sind. Der \lstinline{UserController} implementiert die folgende Endpunkte:
+
+\begin{itemize}
+    \item \lstinline{POST /users} $\rightarrow$ CreateUser
+    \item \lstinline{POST /users/login} $\rightarrow$ Login
+\end{itemize}
+
+Über den ersten Endpunkt geschieht die Registrierung. Das Frontend schickt mit einer POST Request den Nutzername, der angelegt werden soll und das Passwort, das gesetzt werden soll. Der Nutzername besitzt in der Datenbank einen Unique Index, damit jeder Nutzername nur einmalig vergeben werden kann. Dadurch ist es später möglich sich mit Name und Passwort zu authentifizieren.
+Wenn der angegebene Nutzername bereits existiert, wird eine Fehlermeldung mit dem Code 409 (Conflict) geschickt, da es sich um einen semantischen Fehler handelt und die Anfrage im Konflikt mit dem Zustand des Servers steht. %todo richtigen Fehlercode im Code verwenden
+Wenn der Nutzer noch nicht existiert, wird er mithilfe der Klasse UserRepository angelegt.
+% Sie verwendet den Passworthasher von ASP.NET Core, welcher eine sichere Hashfunktion mit Salt verwendet, um die Passwörter sicher zu speichern.
+Zur sicheren Speicherung der Passwörter wird der Passwort-Hasher von ASP.NET Core verwendet, der eine sichere Hashfunktion mit einem zufällig generierten Salt verwendet.
+
+Die erste Authentifizierung wird über Controller-Endpunkt \lstinline{POST /users/login} durchgeführt. Dafür muss der eindeutige Nutzername und das Passwort angegeben werden. Der UserController kann mithilfe des UserRepositorys überprüfen, ob er existiert und, ob das gegebene Passwort richtig ist. Dafür wird wieder die selbe Hashfunktion genutzt. Falls eine der Überprüfungen fehlschlägt, wird eine Fehlermeldung mit dem Code 401 (Unauthorized) zurückgeschickt. Andernfalls wird über die Funktion GenerateJWT ein \ac{JWT} erstellt. Dieses Token enthält die User ID und den Ablaufzeitpunkt, welcher auf zwei Stunden gesetzt ist. Der Ablaufzeitpunkt ist wichtig, damit das Token nicht auf unbestimmte Zeit gültig bleibt. Weitere Informationen und komplexere Nutzerrollen sind in dieser Anwendung nicht notwendig. Mithilfe von diesem Token kann der Nutzer die weiteren Endpunkte verwenden, die auch eine Authentifizierung benötigen. Das ist bei allen Endpunkten der Fall, außer beim UserController um die Angriffsfläche zu minimieren.
+
+\begin{figure}
+    \includegraphics[width=\linewidth]{images/diagrams/auth.png}
+    \caption{Klassendiagramm Authentifizierung}
+    \label{fig:cd_auth}
+\end{figure}
 
 \subsection{Statistiken}
 \todo{TODO}
 
-\subsection{Scahchengine}
+\subsection{Schachengine}
 \todo{TODO}
 
-\section{Abläufe}
+\section{Laufzeitsicht}
 \todo{Vorläufig}
 Um die Kernfeatures der Anwendung zu ermöglichen werden die folgenden Endpunkte unter \lstinline{/openings} implementiert.
 
