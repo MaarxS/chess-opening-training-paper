@@ -45,6 +45,7 @@ Die API wird in C\# realisiert. Mit dem ASP.NET Core Framework wird eine control
 % TODO im Code umsetzen
 
 \subsection{Eröffnungen}
+\label{cp:openings}
 Der Bestandteil Eröffnungen ist für alles zuständig, wofür die Daten der Eröffnungen benötigt werden. Dazu gehört also das Lernen und Üben von Eröffnungen. \autoref{fig:cd_opening} zeigt die dazugehörigen Klassen. Der OpeningController definiert alle Endpunkte unter der URI \lstinline{/openings}.
 Die tatsächlichen Rückgabewerte des
 Jede public Funktion der Klasse ist in diesem Fall für einen Endpunkt zuständig. Die Zuteilung ist folgendermaßen gestaltet:
@@ -84,7 +85,7 @@ Wie bereits in \autoref{cp:auth} beschrieben, wird auch in diesem Projekt eine A
     \item \lstinline{POST /users/login} $\rightarrow$ Login
 \end{itemize}
 
-Über den ersten Endpunkt geschieht die Registrierung. Das Frontend schickt mit einer POST Request den Nutzername, der angelegt werden soll und das Passwort. Der Nutzername besitzt in der Datenbank einen Unique Index, damit jeder Name nur einmal existiert. Dadurch ist es später möglich, sich mit Name und Passwort zu authentifizieren.
+Über den ersten Endpunkt geschieht die Registrierung. Das Frontend schickt mit einer POST Anfrage den Nutzername, der angelegt werden soll und das Passwort. Der Nutzername besitzt in der Datenbank einen Unique Index, damit jeder Name nur einmal existiert. Dadurch ist es später möglich, sich mit Name und Passwort zu authentifizieren.
 Wenn der angegebene Nutzername bereits existiert, wird eine Fehlermeldung mit dem Code 409 (Conflict) geschickt, da es sich um einen semantischen Fehler handelt und die Anfrage im Konflikt mit dem Zustand des Servers steht. %todo richtigen Fehlercode im Code verwenden
 Wenn der Nutzer noch nicht existiert, wird er mithilfe der Klasse UserRepository angelegt.
 % Sie verwendet den Passworthasher von ASP.NET Core, welcher eine sichere Hashfunktion mit Salt verwendet, um die Passwörter sicher zu speichern.
@@ -105,22 +106,17 @@ Die erste Authentifizierung wird über den Controller-Endpunkt \lstinline{POST /
 \todo{TODO}
 
 \section{Laufzeitsicht}
-\todo{Vorläufig}
-Um die Kernfeatures der Anwendung zu ermöglichen werden die folgenden Endpunkte unter \lstinline{/openings} implementiert.
 
-\begin{itemize}
-    \item \verb|GET /openings|
-    \item \verb|GET /openings/{id}/variants|
-    \item \verb|GET /openings/{id}/variants/next-moves|
-    \item \verb|GET /openings/{id}/next-move|
-\end{itemize}
+In diesem Kapitel wird der Ablauf von den komplexeren Funktionen der Anwendung beschrieben. Dabei wird erklärt, welche Anfragen das Frontend schickt und wie die REST-Endpunkte dabei verwendet werden.
 
-Mit ihnen kann man den Lern- und Übungsmodus umsetzen. Der Ablauf des Lernmodus ist in \autoref{fig:sd_opening_training} dargestellt. Er kann in den folgenden drei Schritten zusammengefasst werden.
+\subsection{Lernmodus}
+Für den Lernmodus werden die Funktionen unter dem Endpunkt \lstinline{/openings} aus \autoref{cp:openings} verwendet.
+Der Ablauf des Lernmodus ist in \autoref{fig:sd_opening_training} dargestellt. Er kann in den folgenden drei Schritten zusammengefasst werden.
 
 \begin{enumerate}
-     \item Der Nutzer wählt den Lernmodus aus. Das Frontend schickt eine GET Anfrage an den Endpuntk \lstinline{/openings}. Dieser liefert eine Liste von OpeningOverviews. Das sind JSON-Objekte, die die Namen und IDs der Wurzeleröffnungen darstellen. Die Namen werden dem Nutzer zur Auswahl gezeigt.
-     \item Der Nutzer wählt die Eröffnung mit der ID D20 aus. Das Frontend schickt eine GET Anfrage an den Endpunkt \lstinline|/openings/D20/variants/next-moves|. Die API liefert die OpeningMoves zu allen Eröffnungen, die mit dem selben Namen anfangen den ersten Zug. OpeningMoves sind sind JSON-Objekte, die den Namen der Eröffnung und einen Zug im UCI-Format enthalten. Diese werden dem Nutzer angezeigt.
-     \item Der Nutzer wählt aus, welchen Zug er ausführen möchte, zum Beispiel 1. d4. Das Frontend schickt eine GET Anfrage an \lstinline|/openings/D20/variants/next-moves?played=d2d4|. Diesmal werden die bereits ausgeführten Züge in dem Query-Parameter \lstinline{played} im UCI-Format übergeben. Die API liefert dann nur noch die Eröffnungen, die auch mit den selben Zügen anfangen. Dieser Schritt kann so oft wiederholt werden, bis keine weiteren Züge mehr vorhanden sind, also die Liste mit OpeningMoves leer ist.
+     \item Als erstes wählt der Nutzer den Lernmodus aus. Das Frontend schickt dann eine GET Anfrage an den Endpuntk \lstinline{/openings}. Dieser liefert eine Liste von OpeningOverviews, was Objekte sind, die die Namen und IDs der Wurzeleröffnungen darstellen. Diese Namen werden dem Nutzer zur Auswahl gezeigt.
+     \item Angenommen der Nutzer wählt die Eröffnung mit der ID D20 aus. Dann schickt das Frontend eine GET Anfragen an den Endpunkt \lstinline|/openings/D20/variants/next-moves|. Daraufhin liefert die API ein OpeningMove-Objekt für jede Eröffnung, die mit dem selben Namen anfangen, wie die Eröffnung mit der ID D20. Die OpeningMove-Objekte enthalten den Namen und den ersten Zug der jeweiligen Eröffnung. Diese werden dem Nutzer angezeigt.
+     \item Der Nutzer kann anschließend auswählen, welchen Zug er ausführen möchte, zum Beispiel 1. d4. Die darauffolgenden Züge können wiederum mit der folgenden GET Anfrage herausgefunden werden: \lstinline|/openings/D20/variants/next-moves?played=d2d4|. Hier werden die bereits ausgeführten Züge im Query-Parameter \lstinline{played} mit \ac{UCI}-Format übergeben. Die API liefert dann nur noch die Eröffnungen, die auch mit den selben Zügen beginnen. Dieser Schritt wird so oft wiederholt, bis keine weiteren Züge mehr vorhanden sind, also die Liste mit OpeningMoves leer ist.
 \end{enumerate}
 
 \begin{figure}
