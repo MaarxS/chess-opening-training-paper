@@ -108,7 +108,7 @@ Zur sicheren Speicherung der Passwörter wird der Passwort-Hasher von ASP.NET Co
 
 Die erste Authentifizierung wird über den Controller-Endpunkt \lstinline{POST /users/login} durchgeführt. Dafür muss der eindeutige Nutzername und das Passwort angegeben werden. Der UserController kann mithilfe des UserRepositorys überprüfen, ob der Nutzer existiert und ob das angegebene Passwort richtig ist. Dafür wird wieder die selbe Hashfunktion genutzt. Falls eine der Überprüfungen fehlschlägt, wird eine Fehlermeldung mit dem Code 401 (Unauthorized) zurückgeschickt. Andernfalls wird über die Funktion GenerateJWT ein \ac{JWT} erstellt. Dieses Token enthält die User ID und den Ablaufzeitpunkt, welcher initial zwei Stunden in der Zukunft liegt. Der Ablaufzeitpunkt ist wichtig, damit das Token nicht auf unbestimmte Zeit gültig bleibt und somit ein Sicherheitsrisiko birgt. Weitere Informationen und komplexere Nutzerrollen sind in dieser Anwendung nicht notwendig. Mithilfe von diesem Token kann der Nutzer die weiteren Endpunkte verwenden, die auch eine Authentifizierung benötigen. Das ist bei allen der Fall, außer bei den Endpunkten des UserControllers, um die Angriffsfläche zu minimieren.
 
-\begin{figure}
+\begin{figure}[h]
     \includegraphics[width=\linewidth]{images/diagrams/auth.png}
     \caption{Klassendiagramm Authentifizierung}
     \label{fig:cd_auth}
@@ -128,42 +128,31 @@ In diesem Kapitel wird der Ablauf von den komplexeren Funktionen der Anwendung b
 Für den Lernmodus werden die Funktionen unter dem Endpunkt \lstinline{/openings} aus \autoref{cp:openings} verwendet.
 Der Ablauf des Lernmodus ist in \autoref{fig:sd_opening_training} dargestellt. Er kann in den folgenden drei Schritten zusammengefasst werden.
 
+%todo redundante Informationen entfernen?
 \begin{enumerate}
      \item Als erstes wählt der Nutzer den Lernmodus aus. Das Frontend schickt dann eine GET Anfrage an den Endpunkt \lstinline{/openings}. Dieser liefert eine Liste von OpeningOverviews, was Objekte sind, die die Namen und IDs der Wurzeleröffnungen darstellen. Diese Namen werden dem Nutzer zur Auswahl gezeigt.
      \item Angenommen der Nutzer wählt die Eröffnung mit der ID D20 aus. Dann schickt das Frontend eine GET Anfragen an den Endpunkt \lstinline|/openings/D20/variants/next-moves|. Daraufhin liefert die API ein OpeningMove-Objekt für jede Eröffnung, die mit dem selben Namen anfangen, wie die Eröffnung mit der ID D20. Die OpeningMove-Objekte enthalten den Namen und den ersten Zug der jeweiligen Eröffnung. Diese werden dem Nutzer angezeigt.
      \item Der Nutzer kann anschließend auswählen, welchen Zug er ausführen möchte, zum Beispiel 1. d4. Die darauffolgenden Züge können wiederum mit der folgenden GET Anfrage herausgefunden werden: \lstinline|/openings/D20/variants/next-moves?played=d2d4|. Hier werden die bereits ausgeführten Züge im Query-Parameter \lstinline{played} mit \ac{UCI}-Format übergeben. Die API liefert dann nur noch die Eröffnungen, die auch mit den selben Zügen beginnen. Dieser Schritt wird so oft wiederholt, bis keine weiteren Züge mehr vorhanden sind, also die Liste mit OpeningMoves leer ist.
 \end{enumerate}
 
-\begin{figure}
+\begin{figure}[h]
     \includegraphics[width=\linewidth]{images/diagrams/sd_opening_training}
     \caption{Ablauf Übungsmodus}
     \label{fig:sd_opening_training}
 \end{figure}
 
 \subsection{Übungsmodus}
-Der Übungsmodus hat einen ähnlichen Ablauf, wie der Lernmodus und verwendet ähnliche Endpunkte. Statt dem Endpnkt \lstinline|/openings/{id}/variants/next-moves| wird hier der Endpunkt \lstinline|/openings/{id}/next-move| verwendet, da nicht die unterschiedlichen Varianten betrachtet werden müssen. Der letztere Endpunkt liefert nur ein OpeningMove-Objekt statt einer Liste. Auch bei diesem Endpunkt kann das Query-Parameter played übergeben werden mit den gespielten Zügen im \ac{UCI}-Format. Wenn es die passenden Züge waren, wird ein OpeningMove-Objekt mit dem nächsten Zug zurückgegeben oder ein 
+Der Übungsmodus verwendet ähnliche Endpunkte, wie der Lernmodus. Statt dem Endpunkt \lstinline|/openings/{id}/variants/next-moves| wird hier der Endpunkt \lstinline|/openings/{id}/next-move| verwendet, da die unterschiedlichen Varianten nicht betrachtet werden müssen.
 
 \begin{enumerate}
-    \item Als erstes wählt der Nutzer den Übungsmodus aus und das Frontend holt sich wieder über \lstinline{GET /openings} die Liste der Eröffnungen in Form von OpeningOverview-Objekten und zeigt diese mit Namen an.
-    \item Der Nutzer wählt diesmal aus, welche Eröffnung er üben will und ob er die schwarzen Figuren oder die weißen spielen will. Bei Auswahl der weißen Figuren geht es mit Schritt 3 weiter, bei Auswahl der schwarzen mit Schritt 4.
-    \item Für den nächsten Zug wird der Nutzer aufgefordert, ihn auszuführen. Das Frontend fragt daraufhin mit dem Endpunkt \lstinline|GET /openings/{id}/next-move| ab, was der richtige nächste Zug für diese Eröffnung ist. Die Antwort der API ist hier auch ein OpeningMove-Objekt mit dem Namen der Eröffnung und dem nächsten Zug als Inhalt. Wenn die Züge nicht übereinstimmen, wird der Nutzer aufgefordert es erneut zu versuchen. An dieser Stelle kann auch die Hinweisfunktion implementiert werden. Wenn der Nutzer nach einem Hinweis fragt, kann das Frontend über den selben Endpunkt den richtigen Zug abfragen und einen Hinweis geben, wie zum Beispiel, welche Figur bewegt werden muss. Dafür ist kein zusätzlicher Endpunkt in der API notwendig.
-
-
-    \item Wenn der Spieler den richtigen Zug gefunden hat, holt das Frontend den nächsten Zug
-    \item Wenn der Spieler den richtigen Zug gefunden hat, wird er aufgefordert, den nächsten Zug auszuführen. Der nächste Zug kann, ähnlich wie im Lernmodus, von der API geholt werden, indem das Query-Parameter played mit den gespielten Zügen im \ac{UCI}-Format mit übergeben wird, zum Beispiel: \lstinline{GET /openings/D20/next-move?played=d2d4%20d}
+    \item Als erstes wählt der Nutzer den Übungsmodus aus und das Frontend holt sich wieder über \lstinline{GET /openings} die Liste der Wurzeleröffnungen und zeigt diese mit Namen an.
+    \item Nachdem der Nutzer eine ausgewählt hat, muss er eine der Varianten auswählen, die über \lstinline|GET /openings/{id}/variants| zurückgegeben werden und entscheiden ob er die schwarzen Figuren oder die weißen spielen will. Bei Auswahl der weißen Figuren geht es mit Schritt 3 weiter, bei Auswahl der schwarzen mit Schritt 4.
+    \item Für den nächsten Zug wird der Nutzer aufgefordert, ihn auszuführen. Das Frontend fragt daraufhin mit dem Endpunkt \lstinline|GET /openings/{id}/next-move| ab, was der richtige nächste Zug für diese Eröffnung ist. Wenn die Züge nicht übereinstimmen, wird er aufgefordert es erneut zu versuchen. An dieser Stelle kann auch die Hinweisfunktion implementiert werden. Wenn der Nutzer nach einem Hinweis fragt, kann das Frontend über den selben Endpunkt den richtigen Zug abfragen und einen Hinweis geben, zum Beispiel welche Figur bewegt werden muss. Dafür ist kein zusätzlicher Endpunkt in der API notwendig. Wenn der Nutzer den richtigen Zug gefunden hat und es noch weitere Züge gibt, geht es mit Schritt 4 weiter. Falls es keine weiteren Züge mehr gibt folgt der Schritt 5.
+    \item Der nächste Zug wird vom Computer ausgeführt. Dafür holt sich das Frontend den Zug über den Endpunkt \lstinline|GET /openings/{id}/next-move| und führt ihn aus. Wenn das der letzte Zug war geht es mit Schritt 6 weiter, ansonsten ist der Nutzer wieder an der Reihe und es geht mit Schritt 4 weiter.
+    \item Nach dem letzten Zug wird ein TrainingResult angelegt mit der Anzahl an Fehlern und Hinweisen. \todo{Endpunkt}
 \end{enumerate}
 
-% Diesmal wird im der erste Zug nicht gezeigt, sondern er muss ihn selber ausführen. Das Frontend frägt daraufhin mit dem Endpunkt \lstinline|GET /openings/{id}/next-move| ab, was der richtige Zug für diese Eröffnung ist. Wenn die Züge nicht übereinstimmen, wird der Nutzer aufgefordert es erneut zu versuchen. An dieser Stelle kann auch die Hinweisfunktion implementiert werden. Wenn der Nutzer nach einem Hinweis fragt, kann das Frontend über den selben Endpunkt den richtigen Zug abfragen und einen Hinweis geben, wie zum Beispiel, welche Figur bewegt werden muss. Dafür ist kein zusätzlicher Endpunkt in der API notwendig.
-
-Als erstes wählt der Nutzer wieder die Eröffnung, über die er abgefragt werden will.
-
-\begin{figure}
-    \begin{center}
-        \includegraphics[width=\linewidth]{images/diagrams/auth.png}
-    \end{center}
-    \caption{}
-    \label{fig:}
-\end{figure}
+\todo{Zustandsdiagramm?}
 
 
 \section{Aufsetzen (Deployment)}
