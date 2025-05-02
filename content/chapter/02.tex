@@ -36,6 +36,35 @@ Für das Erlernen von Schacheröffnungen ist es auch sinnvoll zu verstehen, wie 
 
 Aus diesen Erkenntnissen kann man schlussfolgern, dass es besonders wichtig ist Inhalte zu wiederholen, damit sich Gelerntes nicht verfälscht und es nicht vergessen wird. Im Schach sollte man um Eröffnungen zu erlernen diese also häufig betrachten. Durch das eigene Spielen und Erinnern kann das Übergehen dieser Eröffnungen in das Langzeitgedächtnis unterstützt werden. Bestimmte Variationen, welche seltener vorkommen sollten auch wiederholt werden, um ein Vergessen, Überschreiben oder Verfälschen zu verhindern.
 
+\section{Lernen durch Spaced Repetition}
+Der Zeitpunkt, wann etwas wiederholt werden sollte, ist sehr wichtig und wirkt sich deutlich darauf aus, wie gut etwas im Langzeitgedächtnis behalten wird. Auch dazu gibt es bereits wissenschaftliche Erkenntnisse.
+Zwei grundsätzlich unterschiedliche Herangehensweisen, die untersucht wurden, sind das Spacing und das Cramming.
+
+\subsection{Cramming}
+Beim Cramming lernt man sehr viele Inhalte in einem kurzen Zeitraum. Dieses Vorgehen wird oft von Schülern verwendet, wenn sie sich auf Klausuren vorbereiten, da es sehr zeiteffizient wirkt. Auf kurze Sicht kann man dadurch mit relativ geringem Aufwand erfolgreich sein. Auf lange Sicht ist allerdings das Spacing effektiver.
+\cite{schimanke_spaced_2017}
+
+\subsection{Spacing}
+\label{cp:Spacing}
+Das Spacing basiert auf einer Erkenntnis von Ebbinghaus \cite{hermann_ebbinghaus_uber_1885}, der in einem Sebstexperiment feststellte, dass er sich erfundene Wörter besser merken kann, wenn er beim Lernen Pausen einlegt. Insgesamt hatte er also beim Lernen mit Spacing weniger Zeitaufwand als beim Lernen mit Cramming. Ebbinghaus endteckte außerdem die sogenannte Vergessenskurve.
+Sie wird durch folgende Formel beschrieben:
+$$R = e^{(-t/S)}$$
+R steht hier für die Behaltensfähigkeit, S für die relative Erinnerungsstärke und t für die Zeit.
+An dieser Funktion kann man auch erkennen, dass die Erinnerung, wie bei einer inversen Exponentialfunktion, zuerst stark fällt und dann langsamer. Darin begründet sich auch der Lag Effect, welcher beschreibt, dass das Lernen noch effizienter ist, wenn man mit größer werdenden Pausen arbeitet. Am Anfang sollte man einen Inhalt also am häufigsten wiederholen und danach in immer größer werdenden Abständen. Allgemein kann auch gesagt werden, dass man Inhalte genau dann wiederholen sollte, wenn man kurz davor ist sie zu vergessen. Am nächsten kommt man an diese Grenze, indem man Spacing verwendet und den Lag Effect ausnutzt.
+\cite{schimanke_spaced_2017}
+
+\subsection{Umsetzung von Spacing}
+Das Verwenden von Spacing um Inhalte zu lernen wird auch Spaced Repetition genannt. In der Vergangenheit wurden einige Techniken entwickelt um dieses Vorgehen umzusetzen.
+
+Eine davon ist die Pimsleur Methode. Hierbei werden Inhalte in exponentiell größer werdenden Intervallen abgefragt. Kritik an diesem Vorgehen ist, dass die Intervalle im Vorhinein festgelegt werden und nicht an das Können der Lernenden angepasst werden kann.
+
+Leitner \cite{leitner_so_1973} entwickelte ein System, dass primär für Karteikarten gedacht war. Bei diesem Vorgehen verwendet man mehrere Kästen, in die man Karteikarten einordnen kann. Jeder Kasten steht dabei für ein anderes Wiederholungsintervall. Neue Karteikarten starten im ersten Kasten und werden am häufigsten wiederholt. Wenn man sich korrekt an eine Karte erinnert hat, wandert diese in den nächsten Kasten mit einem längeren Wiederholungsintervall. Wenn man sich falsch an eine Karte erinnert hat, wandert die Karte zurück in den vorherigen Kasten mit einem höheren Wiederholungsintervall. Dieses System ist gut geeignet für Karteikarten, doch durch die Verwendung von Computern ist es möglich genauere Methoden zu entwickeln.
+
+Eine neuere Herangehensweise ist die Halbwertszeitregression. Als Basis dafür wird die Vergessenskurve von Ebbinghaus aus \autoref{cp:Spacing} verwendet. R ist dann die Wahrscheinlichkeit $p$, dass ein Inhalt richtig wiederrufen wird, t die Zeit seit der letzten Trainingseinheit $\Delta$ und S die Halbwertszeit $h$ und die Basis $e$ wird durch 2 ersetzt. Dadurch erhält man die Formel:
+$$p = 2^{-\Delta/h}$$
+Die Funktion $\hat{h}_\Theta = 2^{\Theta*x}$ beschreibt nun die geschätzte Halbwertszeit, wobei $x$ ein Merkmalsvektor ist, der die vorherigen Erfahrung des Lernenden beschreibt und $\Theta$ ein Parametervektor, der jeder Eigenschaft aus $x$ eine Gewichtung zuordnet. Als Merkmale kann zum Beispiel die Anzahl der erfolgreichen Trainingseinheiten, fehlgeschlagenen Trainingseinheiten und Anzahl Trainingseinheiten insgesamt verwendet werden. Die Algorithmen von Pimsleur und Leitner können auch durch eine Ausprägung des Parametervektors in dieser Funktion dargestellt werden. Ziel der Halbwertszeitregression ist es, ein $\Theta$ zu finden, das möglichst genau die tatsächliche Vergessenskurve beschreibt. Dafür werden vergangene Trainingsergebnisse als Trainingsdaten verwendet. Über eine Verlustfunktion kann erkannt werden, wie gut das aktuelle Modell ist und mithilfe eines Gradientenabstiegverfahrens kann es angepasst werden. Dieses Modell wurde bereits erfolgreich in der Sprachlernanwendung Duolingo verwendet, mit einer reduzierten Fehlerrate von 45\% im Vergleich zum Leitner-System. Da das Lernen von Schacheröffnungen, genau wie das Lernen von Spracen, zu einem großen Teil aus Auswendiglernen besteht, ist zu erwarten, dass das Modell beim Lernen von Schacheröffnungen ähnliche Vorteile bringt.
+\cite{settles_trainable_2016}
+
 \section{Schachpsychologie}% Psychologie des Eröffnungen Lernens
 In der Schachpsychologie wurde von unterschiedlichen Personen bereits einige gemeinsame Beobachtungen gemacht. Gobet und Jansen haben in \cite{gobet_training_2006} die folgende Kernaussagen gesammelt:
 
@@ -47,7 +76,7 @@ In der Schachpsychologie wurde von unterschiedlichen Personen bereits einige gem
     \item Es gibt keinen Unterschied in dem Suchalgorithmus eines Expertenspielers und eines Großmeisters.
     \item Meister verlieren in simultanen Spielen relativ wenig ihrer Fähigkeiten.
 \end{enumerate}
-
+S
 \subsection{Die Template Theorie}
 Aufschluss über diese Beobachtungen soll die Template Theorie geben, welche von Gobet und Simon in \cite{gobet_templates_1996} beschrieben wird. Die Template Theorie berücksichtigt, dass das kognitive System der Menschen aus drei Hauptbestandteilen besteht, wie in \autoref{gedächtnis} beschrieben.
 Das sensoriesche Gedächtnis wird hier räumlich-zeitlicher Speicher genannt und es wird auch das stark begrenzte Kurzzeitgedächtnis und das Langzeitgedächtnis näher betrachtet.
