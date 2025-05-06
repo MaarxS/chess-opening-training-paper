@@ -115,7 +115,19 @@ Die erste Authentifizierung wird über den Controller-Endpunkt \lstinline{POST /
 \end{figure}
 
 \subsection{Statistiken}
-\todo{TODO}
+Um die Benutzererfahrung zu personalisieren werden Statistiken in Form von Trainingsergebnissen gesammelt.
+Während dem Übungsmodus zählt das Frontend mit, wie viele Fehler der Spieler macht und wie viele Tipps er verwendet. Sobald der Nutzer das Training beendet, werden diese Daten über den Endpunkt \lstinline{POST /stats/variants} an das Backend geschickt. Das erkennt durch das \ac{JWT} den Nutzer und ergänzt die Daten durch die UserID und den aktuellen Zeitstempel, bevor sie in die Tabelle TrainingResult geschrieben werden.
+
+Die TrainingResults können verwendet werden, um einzuschlätzen, wie gut der Nutzer eine Eröffnung kann. Aufgrund dessen ist es möglich, dem Nutzer eine Empfehlung zu geben, welche Eröffnung er als nächstes üben soll. Man kann dafür Halbwertszeitregression aus \autoref{cp:halbwertszeitregression} anwenden.
+Dieser Algorithmus ist allerdings aufwendig zu implementieren und es werden Datensätze benötigt, die beschreiben, wie schnell Schacheröffnungen gelernt und vergessen werden. Aus diesem Grund wird diese Lösung im Rahmen dieser Arbeit nicht implementiert.
+% Das ist allerdings aufwendig zu implementieren und passt nicht in den Rahmen dieser Arbeit.
+% Stattdessen wird eine einfachere Lösung verwendet, bei dem aus dem Attributen eine gewichtete Summe gebildet wird.
+
+Stattdessen wird eine vereinfachte Lösung verwendet.
+Wie bei der Halbwertszeitregression ist die Vergessenskurve $p = 2^{-\Delta/h}$ die Basis. Für $\Delta$ kann die Dauer eingesetzt werden, seitdem das letzte Training durchgeführt wurde. Die Eröffnungen können dann aufsteigend nach der Erinnerungswahrscheinlichkeit $p$ sortiert werden, um zu empfehlen, welche Eröffnung als nächstes gelernt werden soll.
+Die Halbwertszeit $h$ wird auch durch die Funktion $\hat{h}_\Theta = 2^{\Theta*x}$ bestimmt.
+Der Merkmalsvektor $x$ besteht aus der Anzahl der Trainingsdurchläufe mit Fehlern $x_f$, der Anzahl der fehlerfreien Trainingsdurchläufen mit Tipps $x_t$ und der Gesamtanzahl an Trainingsdruchläufen $x_n$. In den TrainingResults werden noch genauere Daten gesammelt, damit man später die Flexibilität hat, andere Merkmale zu verwenden.
+Im Gegensatz zur Halbwertszeitregression wird keine Regression durchgeführt, um den Gewichtsvektor $\Theta$ zu bestimmen. Die Gewichte werden stattdessen im Vorhinein festgelegt.\todo{welche Werte} Der Nachteil davon ist, dass die Werte nicht getestet sind und unklar ist, wie gut sie zu der tatsächlichen Vergessenskurve passen. Eine Festlegung durch empirisch erfasste Werte oder durch Regression bestimmte Werte könnten den Algorithmus deutlich verbessern.
 
 \subsection{Schachengine}
 \todo{TODO}
