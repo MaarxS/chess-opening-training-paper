@@ -115,19 +115,40 @@ Die erste Authentifizierung wird über den Controller-Endpunkt \lstinline{POST /
 \end{figure}
 
 \subsection{Statistiken}
-Um die Benutzererfahrung zu personalisieren werden Statistiken in Form von Trainingsergebnissen gesammelt.
-Während dem Übungsmodus zählt das Frontend mit, wie viele Fehler der Spieler macht und wie viele Tipps er verwendet. Sobald der Nutzer das Training beendet, werden diese Daten über den Endpunkt \lstinline{POST /stats/variants} an das Backend geschickt. Das erkennt durch das \ac{JWT} den Nutzer und ergänzt die Daten durch die UserID und den aktuellen Zeitstempel, bevor sie in die Tabelle TrainingResult geschrieben werden.
+Um die Benutzererfahrung zu personalisieren werden Statistiken in Form von Trainingsergebnissen gesammelt. Die Trainingsergebnisse können verwendet werden, um verschiedene Kennwerte zu berechnen, zum Beispiel, wie viele Fehler der Nutzer im Durchschnitt bei einer Eröffnung macht. Die Kennwerte können dem Nutzer angezeigt werden, damit dieser einschätzen kann, wie gut er eine Eröffnung beherrscht. Zusätzlich dazu werden die Kennwerte verwendet um einen Wert zu berechnen, wie gut der Spieler eine Eröffnung kann. Dieser Wert wird in der Anwendung Expertise genannt und soll angeben, mit welcher Wahrsscheinlichkeit ein Nutzer die Eröffnung fehlerfrei nachspielen kann. Das Programm kann dem Nutzer aufgrund dieses Wertes einen Vorschlag geben, welche Eröffnung als nächstes wiederholt werden soll. Um diese Funktionalitäten bereitzustellen, werden die Klassen aus \autoref{fig:cd_stats} implementiert.
 
-Die TrainingResults können verwendet werden, um einzuschlätzen, wie gut der Nutzer eine Eröffnung kann. Aufgrund dessen ist es möglich, dem Nutzer eine Empfehlung zu geben, welche Eröffnung er als nächstes üben soll. Man kann dafür Halbwertszeitregression aus \autoref{cp:halbwertszeitregression} anwenden.
-Dieser Algorithmus ist allerdings aufwendig zu implementieren und es werden Datensätze benötigt, die beschreiben, wie schnell Schacheröffnungen gelernt und vergessen werden. Aus diesem Grund wird diese Lösung im Rahmen dieser Arbeit nicht implementiert.
-% Das ist allerdings aufwendig zu implementieren und passt nicht in den Rahmen dieser Arbeit.
-% Stattdessen wird eine einfachere Lösung verwendet, bei dem aus dem Attributen eine gewichtete Summe gebildet wird.
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{images/diagrams/stats.png}
+    \caption{Klassendiagramm Statistiken}
+    \label{fig:cd_stats}
+\end{figure}
 
-Stattdessen wird eine vereinfachte Lösung verwendet.
-Wie bei der Halbwertszeitregression ist die Vergessenskurve $p = 2^{-\Delta/h}$ die Basis. Für $\Delta$ kann die Dauer eingesetzt werden, seitdem das letzte Training durchgeführt wurde. Die Eröffnungen können dann aufsteigend nach der Erinnerungswahrscheinlichkeit $p$ sortiert werden, um zu empfehlen, welche Eröffnung als nächstes gelernt werden soll.
+
+\subsubsection{StatisticsController}
+Der StatisticsController übernimmt die Bereitstellung folgender Endpunkte:
+
+\begin{itemize}
+  \item \lstinline|POST /stats/variants| $\rightarrow$ addTrainingResult
+  \item \lstinline|GET /stats/variants/{id}| $\rightarrow$ getVariantStatistics
+  \item \lstinline|GET /stats/variants| $\rightarrow$ GetMoveVariants
+\end{itemize}
+
+Während dem Übungsmodus zählt das Frontend mit, wie viele Fehler der Spieler macht und wie viele Tipps er verwendet. Sobald der Nutzer das Training beendet, werden diese Daten über den Endpunkt \lstinline{POST /stats/variants} an das Backend geschickt. Das erkennt durch das \ac{JWT} den Nutzer und ergänzt die Daten durch die UserID und den aktuellen Zeitstempel, bevor sie über das IStatisticsRepository in die Tabelle TrainingResult geschrieben werden.
+
+Eine Ausgabe der TrainingReults gibt es nicht, da sie alleinstehend nicht sonderlich interessant sind. Stattdessen können berechnete Statistiken abgefragt werden. Über \lstinline|GET /stats/variants/{id}| werden die Statistiken einer einzelnen Eröffnungsvariante abgerufen und über \lstinline|GET /stats/variants| bekommt man eine Liste aller bisher geübten Eröffnungen mit ihren Statistiken. Die Liste kann auch mithilfe des Query-Parameters \lstinline{sort} sortiert werden. Die Berechnungen werden im StatisticsRepository durchgeführt.
+
+\subsubsection{StatisticsRepository}
+Welche Werte berechnet werden kann in der Klasse OpeningStatistics gesehen werden. Besonders interessant ist hier der Wert expertise, welcher angeben soll, mit welcher Wahrscheinlichkeit ein Nutzer die Eröffnung fehlerfrei wiedergeben kann.
+Die Berechnung dieses Wertes basiert auf der Halbwertszeitregression aus \autoref{cp:halbwertszeitregression}.
+
+% Die TrainingResults können verwendet werden, um einzuschlätzen, wie gut der Nutzer eine Eröffnung kann. Aufgrund dessen ist es möglich, dem Nutzer eine Empfehlung zu geben, welche Eröffnung er als nächstes üben soll. Man kann dafür Halbwertszeitregression aus \autoref{cp:halbwertszeitregression} anwenden.
+% Dieser Algorithmus ist allerdings aufwendig zu implementieren und es werden Datensätze benötigt, die beschreiben, wie schnell Schacheröffnungen gelernt und vergessen werden. Aus diesem Grund wird diese Lösung im Rahmen dieser Arbeit nicht implementiert.
+
+Wie bei der Halbwertszeitregression ist die Vergessenskurve $p = 2^{-\Delta/h}$ die Basis, wobei $p$ als der Expertisenwert zu verstehen ist. Für $\Delta$ kann die Dauer eingesetzt werden, seitdem das letzte Training durchgeführt wurde.
 Die Halbwertszeit $h$ wird auch durch die Funktion $\hat{h}_\Theta = 2^{\Theta*x}$ bestimmt.
-Der Merkmalsvektor $x$ besteht aus der Anzahl der Trainingsdurchläufe mit Fehlern $x_f$, der Anzahl der fehlerfreien Trainingsdurchläufen mit Tipps $x_t$ und der Gesamtanzahl an Trainingsdruchläufen $x_n$. In den TrainingResults werden noch genauere Daten gesammelt, damit man später die Flexibilität hat, andere Merkmale zu verwenden.
-Im Gegensatz zur Halbwertszeitregression wird keine Regression durchgeführt, um den Gewichtsvektor $\Theta$ zu bestimmen. Die Gewichte werden stattdessen im Vorhinein festgelegt.\todo{welche Werte} Der Nachteil davon ist, dass die Werte nicht getestet sind und unklar ist, wie gut sie zu der tatsächlichen Vergessenskurve passen. Eine Festlegung durch empirisch erfasste Werte oder durch Regression bestimmte Werte könnten den Algorithmus deutlich verbessern.
+Der Merkmalsvektor $x$ besteht aus der Anzahl der Trainingsdurchläufe mit Fehlern $x_f$, der Anzahl der fehlerfreien Trainingsdurchläufen mit Tipps $x_t$ und der Gesamtanzahl an Trainingsdurchläufen $x_n$. In den TrainingResults werden noch genauere Daten gesammelt, damit man später die Flexibilität hat, andere Merkmale zu verwenden.
+Im Gegensatz zur Halbwertszeitregression wird keine Regression durchgeführt, um den Gewichtsvektor $\Theta$ zu bestimmen, weil das ein erheblicher Zusatzaufwand wäre und Datensätze benötigt werden, die beschreiben, wie schnell Schacheröffnungen gelernt und vergessen werden.
+Die Gewichte werden stattdessen im Vorhinein festgelegt.\todo{welche Werte} Der Nachteil davon ist, dass sie nicht getestet sind und unklar ist, wie gut sie zu der tatsächlichen Vergessenskurve passen. Eine Festlegung durch empirisch erfasste Werte oder durch Regression bestimmte Werte könnten den Algorithmus deutlich verbessern.
 
 \subsection{Schachengine}
 \todo{TODO}

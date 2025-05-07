@@ -1,0 +1,43 @@
+@startuml
+class TrainingResult {
+    + id: int
+    + userId: int
+    + user: User
+    + openingId: int
+    + errors: int
+    + hints: int
+    + dateTime: DateTime
+}
+class OpeningStatistics {
+    + openingId: int
+    + openingName: string
+    + expertise: float
+    + perfectRuns: int
+    + hintedRuns: int
+    + failedRuns: int
+    + totalRuns: int
+    + avgErrors: float
+    + avgHints: float
+}
+class NewTrainingResult {
+    variantId: string
+    errors: int
+    hints: int
+}
+class StatisticsController {
+    + addTrainingResult(newTrainingResult: newTrainingResult)
+    + getVariantStatistics(variantId: string): OpeningStatistics
+    + getStatistics(sort: string): [OpeningStatistics]
+}
+interface IStatisticsRepository {
+    + createTrainingResult(trainingResult: TrainingResult)
+    + getVariantStatistics(variantId: int): OpeningStatistics
+    + getStatistics(sort: string): [OpeningStatistics]
+}
+class StatisticsRepository {
+    - calculateExpertise(failedRuns: int, hintedRuns: int, perfectRuns: int): float
+}
+
+StatisticsController --> IStatisticsRepository
+IStatisticsRepository <|-- StatisticsRepository
+@enduml
