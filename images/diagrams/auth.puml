@@ -10,7 +10,7 @@ class User {
 }
 class UserController {
     + CreateUser(newUser: UserParams)
-    + Login(loginRequest: UserParams): string
+    + Login(userParams: UserParams): string
     - GenerateJWT(user: User): string
 }
 interface IUserRepository {
