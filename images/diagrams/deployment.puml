@@ -1,0 +1,13 @@
+@startuml
+agent "Reverse Proxy (nginx)" as proxy
+node Frontend
+node "Rest-API" as API
+database Postgres
+
+proxy --> Frontend
+proxy --> API
+Frontend -> API
+
+API -> Postgres
+
+@enduml

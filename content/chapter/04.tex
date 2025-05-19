@@ -200,7 +200,7 @@ Der Ablauf des Lernmodus ist in \autoref{fig:sd_opening_training} dargestellt. E
      \item Der Nutzer kann anschließend auswählen, welchen Zug er ausführen möchte, zum Beispiel 1. d4. Die darauffolgenden Züge können wiederum mit der folgenden GET Anfrage herausgefunden werden: \lstinline|/openings/D20/variants/next-moves?played=d2d4|. Hier werden die bereits ausgeführten Züge im Query-Parameter \lstinline{played} mit \ac{UCI}-Format übergeben. Die API liefert dann nur noch die Eröffnungen, die auch mit den selben Zügen beginnen. Dieser Schritt wird so oft wiederholt, bis keine weiteren Züge mehr vorhanden sind, also die Liste mit OpeningMoves leer ist.
 \end{enumerate}
 
-\begin{figure}[h]
+\begin{figure}
     \includegraphics[width=\linewidth]{images/diagrams/sd_opening_training}
     \caption{Ablauf Übungsmodus}
     \label{fig:sd_opening_training}
@@ -220,4 +220,13 @@ Der Übungsmodus verwendet ähnliche Endpunkte, wie der Lernmodus. Statt dem End
 \todo{Zustandsdiagramm?}
 
 
-\section{Aufsetzen (Deployment)}
+\section{Verteilungssicht (Deployment)}
+Um das Programm auf einem Server bereitzustellen werden die einzelnen Bestandteile in Docker Images eingebettet. Das hat vor allem den Vorteil, dass die Programme auf allen Plattformen, die Docker unterstützen, unkompliziert ausgeführt werden können. Die einzelnen Images können mittels Docker-Compose gestarten und verbunden werden. Diese Anwendung ist in drei Images aufgeteilt, die auch in \autoref{fig:deployment} zu sehen sind. Ein Image enthält das Frontend, eins die Rest-API und eins die Postgres Datenbank. Die Datei mit den Eröffnungen wird in das Image der Rest-API integriert und ist daher nicht auf dem Diagramm zu sehen. Das Frontend und die API ist durch einen Reverse Proxy über das Internet erreichbar. Das ermöglicht es, dass die Komponenten auch auf unterschiedlichen Servern ausgeführt werden können.
+ 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=10cm]{images/diagrams/deployment}
+    \caption{Verteilungssicht}
+    \label{fig:deployment}
+\end{figure}
+

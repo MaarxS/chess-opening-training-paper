@@ -1,10 +1,10 @@
 @startuml
 [Frontend]
 package "REST-API" as API {
-  [Schachengine]
   [Eroeffnungen]
   [Authentifizierung]
   [Statistiken]
+  [Schachengine]
 }
 [UCI-Engine] as uci
 database Eroeffnungsliste as liste
