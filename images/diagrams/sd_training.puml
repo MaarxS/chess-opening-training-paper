@@ -1,0 +1,31 @@
+@startuml
+[*] --> Eröffnungswahl
+Eröffnungswahl: entry / GET /openings
+Eröffnungswahl: do / Zeige Eröffnungen
+
+Eröffnungswahl --> Variantenwahl
+Variantenwahl: entry / GET /openings/{id}/variants
+Variantenwahl: do / Zeige Varianten
+
+Variantenwahl --> cVariant
+state cVariant <<choice>>
+
+cVariant --> Spielerzug: [Figurwahl = weiß]
+Spielerzug: entry / GET /openings/{id}/next-move?played={played}
+Spielerzug: do / Zeige Spielfeld
+
+cVariant --> Computerzug : [Figurwahl = schwarz]
+Computerzug : entry / GET /openings/{id}/next-move?played={played}
+Computerzug : do / Führe Zug aus
+
+Spielerzug -> Computerzug : [zug = next-move]
+Computerzug -l-> Spielerzug : [ ]
+
+state "Training Sepichern" as save
+Spielerzug --> save: [next-move = ""]
+Computerzug --> save: [next-move = ""]
+save: entry / POST /stats/variants
+
+save --> [*]
+
+@enduml

@@ -66,7 +66,7 @@ Der Endpunkt \lstinline|GET /openings/{id}/variant| ist dazu da alle Eröffnunge
 
 Der Endpunkt \lstinline|GET /openings/{id}/next-move| gibt ein OpeningMove-Objekt zurück, dass den Namen der Eröffnung und den nächsten Zug enthält. Bei diesem Endpunkt kann zusätzlich das Query-Parameter played übergeben werden mit den bisher gespielten Zügen im \ac{UCI}-Format. Wenn alle Züge gespielt wurden, wird ein leerer String als Zug übergeben.
 
-Der Endpunkt \lstinline|GET /openings/{id}/variant/next-moves| dient dazu alle möglichen nächsten Züge in einer Eröffnungsfamilie herauszufinden. Er gibt alle OpeningMove-Objekte der gegebenen Eröffnungsfamilie zurück. Auch hier kann man das Query-Parameter played mitgeben. Die Liste enthält dann nur noch die Eröffnungen, die auch mit diesen Zügen beginnen.Beispielsweise werden bei der Anfrage \lstinline|GET /openings/D20/variant|
+Der Endpunkt \lstinline|GET /openings/{id}/variant/next-moves| dient dazu alle möglichen nächsten Züge in einer Eröffnungsfamilie herauszufinden. Er gibt alle OpeningMove-Objekte der gegebenen Eröffnungsfamilie zurück. Auch hier kann man das Query-Parameter played mitgeben. Die Liste enthält dann nur noch die Eröffnungen, die auch mit diesen Zügen beginnen.Beispielsweise werden bei der Anfrage \lstinline|GET /openings/D20/variant| \todo{Satz beenden}
 
 % Die Zuordnung zu einer Eröffnungsfamilie findet statt, wie in \autoref{cp:opening list} beschrieben.
 
@@ -191,12 +191,11 @@ In diesem Kapitel wird der Ablauf von den komplexeren Funktionen der Anwendung b
 
 \subsection{Lernmodus}
 Für den Lernmodus werden die Funktionen unter dem Endpunkt \lstinline{/openings} aus \autoref{cp:openings} verwendet.
-Der Ablauf des Lernmodus ist in \autoref{fig:sd_opening_training} dargestellt. Er kann in den folgenden drei Schritten zusammengefasst werden.
+Das Sequenzdiagramm in \autoref{fig:sd_opening_training} zeigt den Ablauf des Lernmodus. Er kann in den folgenden drei Schritten zusammengefasst werden.
 
-%todo redundante Informationen entfernen?
 \begin{enumerate}
-     \item Als erstes wählt der Nutzer den Lernmodus aus. Das Frontend schickt dann eine GET Anfrage an den Endpunkt \lstinline{/openings}. Dieser liefert eine Liste von OpeningOverviews, was Objekte sind, die die Namen und IDs der Wurzeleröffnungen darstellen. Diese Namen werden dem Nutzer zur Auswahl gezeigt.
-     \item Angenommen der Nutzer wählt die Eröffnung mit der ID D20 aus. Dann schickt das Frontend eine GET Anfragen an den Endpunkt \lstinline|/openings/D20/variants/next-moves|. Daraufhin liefert die API ein OpeningMove-Objekt für jede Eröffnung, die mit dem selben Namen anfangen, wie die Eröffnung mit der ID D20. Die OpeningMove-Objekte enthalten den Namen und den ersten Zug der jeweiligen Eröffnung. Diese werden dem Nutzer angezeigt.
+     \item Als erstes wählt der Nutzer den Lernmodus aus. Das Frontend schickt dann eine GET Anfrage an den Endpunkt \lstinline{/openings}. Dieser liefert eine Liste von OpeningOverviews, die die Namen und IDs der Wurzeleröffnungen enthalten. Die Namen werden dem Nutzer zur Auswahl gezeigt.
+     \item Angenommen der Nutzer wählt die Eröffnung mit der ID D20 aus, dann schickt das Frontend eine GET Anfragen an den Endpunkt \lstinline|/openings/D20/variants/next-moves|. Daraufhin liefert die API ein OpeningMove-Objekt für jede Eröffnung, die mit dem selben Namen anfangen, wie die Eröffnung mit der ID D20. Die OpeningMove-Objekte enthalten den Namen und den ersten Zug der jeweiligen Eröffnung. Diese werden dem Nutzer angezeigt.
      \item Der Nutzer kann anschließend auswählen, welchen Zug er ausführen möchte, zum Beispiel 1. d4. Die darauffolgenden Züge können wiederum mit der folgenden GET Anfrage herausgefunden werden: \lstinline|/openings/D20/variants/next-moves?played=d2d4|. Hier werden die bereits ausgeführten Züge im Query-Parameter \lstinline{played} mit \ac{UCI}-Format übergeben. Die API liefert dann nur noch die Eröffnungen, die auch mit den selben Zügen beginnen. Dieser Schritt wird so oft wiederholt, bis keine weiteren Züge mehr vorhanden sind, also die Liste mit OpeningMoves leer ist.
 \end{enumerate}
 
@@ -207,7 +206,7 @@ Der Ablauf des Lernmodus ist in \autoref{fig:sd_opening_training} dargestellt. E
 \end{figure}
 
 \subsection{Übungsmodus}
-Der Übungsmodus verwendet ähnliche Endpunkte, wie der Lernmodus. Statt dem Endpunkt \lstinline|/openings/{id}/variants/next-moves| wird hier der Endpunkt \lstinline|/openings/{id}/next-move| verwendet, da die unterschiedlichen Varianten nicht betrachtet werden müssen.
+Der Übungsmodus verwendet ähnliche Endpunkte, wie der Lernmodus. Statt dem Endpunkt \lstinline|/openings/{id}/variants/next-moves| wird hier der Endpunkt \lstinline|/openings/{id}/next-move| verwendet, da die unterschiedlichen Varianten nicht betrachtet werden müssen. Der Ablauf wird hier in dem Zustandsdiagramm in \autoref{fig:sd_training} dargestellt, da dieser Ablauf etwas komplexer ist. Es ist jedoch zu erwähnen, dass der Zustand sich ausschließlich im Frontend befindet, um der REST Architektur treu zu bleiben. Alle benötigten Zustandsinformationen werden mit jeder Anfrage an das Backend mitgegeben.
 
 \begin{enumerate}
     \item Als erstes wählt der Nutzer den Übungsmodus aus und das Frontend holt sich wieder über \lstinline{GET /openings} die Liste der Wurzeleröffnungen und zeigt diese mit Namen an.
@@ -217,8 +216,13 @@ Der Übungsmodus verwendet ähnliche Endpunkte, wie der Lernmodus. Statt dem End
     \item Nach dem letzten Zug wird ein TrainingResult angelegt mit der Anzahl an Fehlern und Hinweisen. \todo{Endpunkt}
 \end{enumerate}
 
-\todo{Zustandsdiagramm?}
+\begin{figure}
+    \includegraphics[width=\linewidth]{images/diagrams/sd_training}
+    \caption{Ablauf Trainingsmodus}
+    \label{fig:sd_training}
+\end{figure}
 
+%todo fix figure placement
 
 \section{Verteilungssicht (Deployment)}
 Um das Programm auf einem Server bereitzustellen werden die einzelnen Bestandteile in Docker Images eingebettet. Das hat vor allem den Vorteil, dass die Programme auf allen Plattformen, die Docker unterstützen, unkompliziert ausgeführt werden können. Die einzelnen Images können mittels Docker-Compose gestarten und verbunden werden. Diese Anwendung ist in drei Images aufgeteilt, die auch in \autoref{fig:deployment} zu sehen sind. Ein Image enthält das Frontend, eins die Rest-API und eins die Postgres Datenbank. Die Datei mit den Eröffnungen wird in das Image der Rest-API integriert und ist daher nicht auf dem Diagramm zu sehen. Das Frontend und die API ist durch einen Reverse Proxy über das Internet erreichbar. Das ermöglicht es, dass die Komponenten auch auf unterschiedlichen Servern ausgeführt werden können.
