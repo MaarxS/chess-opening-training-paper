@@ -29,7 +29,6 @@ Das Verwenden von Dependency Injection bietet einige Vorteile. Zum einen ermögl
 
 \subsection{Repository Pattern}
 Um die Datenspeicherung von dem Rest des Backends zu trennen wird das Repository Pattern angewendet. Bei diesem Pattern wird eine Repository-Klasse erstellt, welche die Abfragelogik enthält. Nach außen werden nur abstrakte domänenspezifische Funktionen exponiert, wie zum Beispiel \lstinline{GetUser(id: int): User} oder \lstinline{CreateUser(name: string, password: string)}. Die Implementierung dieser Klasse sorgt dann dafür, dass die entsprechenden Daten gefunden, aktualisiert oder hinzugefügt werden. Diese Abfragen können zum Beispiel komplexe SQL-Abfragen sein oder auch das Lesen einer Datei. In diesem Projekt wird jede Repository durch ein Interface definiert. Das ermöglicht es die jeweiligen Implementierungen mittels Dependency Injection zu ersetzen. \cite{evans_domain-driven_2004}
-\missingfigure{Beispieldiagramm}
 
 \section{Architektur}
 Die Architektur ist in mehrere verschiedene Bestandteile aufgeteilt. Die zentrale Aufteilung besteht zwischen Backend und Frontend. In dieser Arbeit wird nur das Backend betrachtet. In \autoref{fig:components} ist ein Überblick über die Architektur zu sehen. Das Frontend greift auf eine \ac{REST}-API zu.
@@ -55,6 +54,12 @@ Der Bestandteil Eröffnungen ist für alles zuständig, wofür die Daten der Er�
 Der OpeningController definiert alle Endpunkte unter der URI \lstinline{/openings}.
 Jede public Funktion der Klasse ist in diesem Fall für einen Endpunkt zuständig. Die Zuteilung ist folgendermaßen gestaltet:
 
+\begin{figure}[htb]
+  \includegraphics[width=\linewidth]{images/diagrams/opening.png}
+  \caption{Klassendiagramm Eröffnungen}
+  \label{fig:cd_opening}
+\end{figure}
+
 \begin{itemize}
   \item \lstinline|GET /openings| $\rightarrow$ GetOpenings
   \item \lstinline|GET /openings/{id}/variant| $\rightarrow$ GetVariants
@@ -69,19 +74,13 @@ Der Endpunkt \lstinline|GET /openings/{id}/variant| ist dazu da alle Eröffnunge
 
 Der Endpunkt \lstinline|GET /openings/{id}/next-move| gibt ein OpeningMove-Objekt zurück, dass den Namen der Eröffnung und den nächsten Zug enthält. Bei diesem Endpunkt kann zusätzlich das Query-Parameter played übergeben werden mit den bisher gespielten Zügen im \ac{UCI}-Format. Wenn alle Züge gespielt wurden, wird ein leerer String als Zug übergeben.
 
-Der Endpunkt \lstinline|GET /openings/{id}/variant/next-moves| dient dazu alle möglichen nächsten Züge in einer Eröffnungsfamilie herauszufinden. Er gibt alle OpeningMove-Objekte der gegebenen Eröffnungsfamilie zurück. Auch hier kann man das Query-Parameter played mitgeben. Die Liste enthält dann nur noch die Eröffnungen, die auch mit diesen Zügen beginnen.Beispielsweise werden bei der Anfrage \lstinline|GET /openings/D20/variant| \todo{Satz beenden}
+Der Endpunkt \lstinline|GET /openings/{id}/variant/next-moves| dient dazu alle möglichen nächsten Züge in einer Eröffnungsfamilie herauszufinden. Er gibt alle OpeningMove-Objekte der gegebenen Eröffnungsfamilie zurück. Auch hier kann man das Query-Parameter played mitgeben. Die Liste enthält dann nur noch die Eröffnungen, die auch mit diesen Zügen beginnen. Beispielsweise werden bei der Anfrage \lstinline|GET /openings/D20/variant?played=d2d4| nur Eröffnungen zurückgegeben, die mit dem Name \enquote{Queen's Gambit Accepted} beginnen und mit dem Zug \lstinline|d2d4| starten.
 
 % Die Zuordnung zu einer Eröffnungsfamilie findet statt, wie in \autoref{cp:opening list} beschrieben.
 
 \subsubsection{OpeningRepository}
 Opening ist die Model Klasse. Sei enthält alle benötigten Daten zu einer Eröffnung. Die API gibt bei einer Anfrage entweder Instanzen der Klassen OpeningOverview oder OpeningMove zurück, die einen Teil der Informationen von Opening besitzen. Dadurch wird Bandbreite gespart und der Client bekommt nur die Daten, die er auch benötigt. Der Datenspeicher ist eine TSV-Datei, die von dem Lichess Datensatz abgeleitet wurde. %todo genauer beschreiben wie er abgeleitet wurde?
 Er wird über das Repository Pattern abgefragt. IOpeningRepository enthält also alle Funtionen, um die Daten abzufragen und zu strukturieren, wie sie der OpeningController benötigt. Die OpeningRepository verwendet wiederum den IOpeningReader, welcher das Lesen der TSV-Datei abstrahiert. Auf diese Weise kann die TSV-Datei ohne viel Aufwand durch eine CSV- oder JSON-Datei ausgetauscht werden. Dafür muss lediglich eine entsprechende Implementierung für den IOpeningReader erstellt werden.
-
-\begin{figure}[h]
-  \includegraphics[width=\linewidth]{images/diagrams/opening.png}
-  \caption{Klassendiagramm Eröffnungen}
-  \label{fig:cd_opening}
-\end{figure}
 
 \subsection{SQL-Datenbank}
 Die dynamischen Daten werden in einer relationalen SQL-Datenbank gespeichert. Dazu zählen die Logindaten der Nutzer und die Nutzerstatistiken zu den Eröffnungen. Dafür existieren die zwei Tabellen User und TrainingResult, welche nachfolgend in Relationenschreibweise notiert sind, wobei der Primärschlüssel fett gedruckt ist und der Fremdschlüssel kursiv:
@@ -98,6 +97,12 @@ Für den Datenbankzugriff wird ein \ac{ORM} verwendet. Microsoft bietet in C\# d
 \subsection{Authentifizierung}
 Wie bereits in \autoref{cp:auth} beschrieben, wird auch in diesem Projekt eine Authentifizierung der Nutzer benötigt, zum einen, um nutzerbezogene Statistiken zu sammeln und eine personalisierte Erfahrung zu bieten, zum anderen, um den Zugriff auf die Schachengine zu begrenzen. \autoref{fig:cd_auth} beschreibt die Klassen, die bei der Authentifizierung verwendet werden. Der \lstinline{UserController} implementiert die folgende Endpunkte:
 
+\begin{figure}[htb]
+    \includegraphics[width=\linewidth]{images/diagrams/auth.png}
+    \caption{Klassendiagramm Authentifizierung}
+    \label{fig:cd_auth}
+\end{figure}
+
 \begin{itemize}
     \item \lstinline{POST /users} $\rightarrow$ CreateUser
     \item \lstinline{POST /users/login} $\rightarrow$ Login
@@ -112,12 +117,6 @@ Zur sicheren Speicherung der Passwörter wird der Passwort-Hasher von ASP.NET Co
 Die erste Authentifizierung wird über den Controller-Endpunkt \lstinline{POST /users/login} durchgeführt. Dafür muss der eindeutige Nutzername und das Passwort angegeben werden. Der UserController kann mithilfe des UserRepositorys überprüfen, ob der Nutzer existiert und ob das angegebene Passwort richtig ist. Dafür wird wieder die selbe Hashfunktion genutzt.
 Falls der Nutzer nicht existiert wird die NotFound (404) zurückgegeben und falls das Passwort nicht stimmt wird Unauthorized (401) zurückgegeben.
 Andernfalls wird über die Funktion GenerateJWT ein \ac{JWT} erstellt. Dieses Token enthält die User ID und den Ablaufzeitpunkt, welcher initial zwei Stunden in der Zukunft liegt. Der Ablaufzeitpunkt ist wichtig, damit das Token nicht auf unbestimmte Zeit gültig bleibt und somit ein Sicherheitsrisiko birgt. Weitere Informationen und komplexere Nutzerrollen sind in dieser Anwendung nicht notwendig. Mithilfe von diesem Token kann der Nutzer die weiteren Endpunkte verwenden, die auch eine Authentifizierung benötigen. Das ist bei allen der Fall, außer bei den Endpunkten des UserControllers, um die Angriffsfläche zu minimieren.
-
-\begin{figure}[h]
-    \includegraphics[width=\linewidth]{images/diagrams/auth.png}
-    \caption{Klassendiagramm Authentifizierung}
-    \label{fig:cd_auth}
-\end{figure}
 
 \subsection{Statistiken}
 Um die Benutzererfahrung zu personalisieren werden Statistiken in Form von Trainingsergebnissen gesammelt. Die Trainingsergebnisse können verwendet werden, um verschiedene Kennwerte zu berechnen, zum Beispiel, wie viele Fehler der Nutzer im Durchschnitt bei einer Eröffnung macht. Die Kennwerte können dem Nutzer angezeigt werden, damit dieser einschätzen kann, wie gut er eine Eröffnung beherrscht. Zusätzlich dazu werden die Kennwerte verwendet, um einen Wert zu berechnen, der angeben soll, wie gut der Spieler eine Eröffnung kann. Dieser Wert wird Expertise genannt und gibt an, mit welcher Wahrscheinlichkeit ein Nutzer die Eröffnung fehlerfrei nachspielt. Das Programm kann dem Nutzer aufgrund dieses Wertes einen Vorschlag geben, welche Eröffnung als nächstes wiederholt werden soll. Um diese Funktionalitäten bereitzustellen, werden die Klassen aus \autoref{fig:cd_stats} implementiert.
@@ -158,7 +157,7 @@ Die Bestandteile des Merkmalsvektors $x$ und seinen Gewichtungen $\Theta$ sind i
 In den TrainingResults werden noch weitere Daten gesammelt, damit man später die Flexibilität hat, andere Merkmale zu verwenden, wie zum Beispiel die durchschnittlichen Fehler pro Trainingsdurchlauf.
 Im Gegensatz zur Halbwertszeitregression wird keine Regression durchgeführt, um den Gewichtsvektor $\Theta$ zu bestimmen, weil das ein erheblicher Zusatzaufwand wäre und Datensätze benötigt werden, die beschreiben, wie schnell Schacheröffnungen gelernt und vergessen werden. Die Gewichte werden stattdessen im Vorhinein festgelegt. Der Nachteil davon ist, dass sie nicht getestet sind und unklar ist, wie gut sie zu der tatsächlichen Vergessenskurve passen. Eine Festlegung durch empirisch erfasste Werte oder durch Regression bestimmte Werte könnten den Algorithmus deutlich verbessern.
 
-\begin{table}[b]
+\begin{table}[htb]
     \centering
     \begin{tabular}{|c|c|l|}
         \hline
@@ -179,7 +178,7 @@ Im Gegensatz zur Halbwertszeitregression wird keine Regression durchgeführt, um
 
 Mit den aktuellen Werten muss $\Delta$ in Tagen angegeben werden. In \autoref{fig:vergessenskurven} sind Vergessenskurven mit den angegebenen Gewichten und Beispielvektoren $x$ zu sehen. Bei vier fehlgeschlagenen und vier perfekten Trainingsdurchläufen fällt die Kurve in den ersten zehn Tagen stark ab und ist nach 8 Tagen bereits unter 10\%, wie in der unteren Kurve zu sehen. Nach einigen weiteren perfekten Durchläufen fällt die Kurve flacher ab. So ist nach diesem Modell 12 Tage später die Wahrscheinlichkeit noch über 80\%, dass der Nutzer die Eröffnung wieder fehlerfrei durchführt, was bei zehn perfekten Trainingsdurchläufen durchaus plausibel ist.
 
-\begin{figure}
+\begin{figure}[htb]
     \input{content/chapter/vergessenskurve}
     \caption{Beispielhafte Vergessenskurve}
     \label{fig:vergessenskurven}
@@ -202,11 +201,13 @@ Das Sequenzdiagramm in \autoref{fig:sd_opening_training} zeigt den Ablauf des Le
      \item Der Nutzer kann anschließend auswählen, welchen Zug er ausführen möchte, zum Beispiel 1. d4. Die darauffolgenden Züge können wiederum mit der folgenden GET Anfrage herausgefunden werden: \lstinline|/openings/D20/variants/next-moves?played=d2d4|. Hier werden die bereits ausgeführten Züge im Query-Parameter \lstinline{played} mit \ac{UCI}-Format übergeben. Die API liefert dann nur noch die Eröffnungen, die auch mit den selben Zügen beginnen. Dieser Schritt wird so oft wiederholt, bis keine weiteren Züge mehr vorhanden sind, also die Liste mit OpeningMoves leer ist.
 \end{enumerate}
 
-\begin{figure}
+\begin{figure}[p]
     \includegraphics[width=\linewidth]{images/diagrams/sd_opening_training}
     \caption{Ablauf Übungsmodus}
     \label{fig:sd_opening_training}
 \end{figure}
+
+\clearpage
 
 \subsection{Übungsmodus}
 Der Übungsmodus verwendet ähnliche Endpunkte, wie der Lernmodus. Statt dem Endpunkt \lstinline|/openings/{id}/variants/next-moves| wird hier der Endpunkt \lstinline|/openings/{id}/next-move| verwendet, da die unterschiedlichen Varianten nicht betrachtet werden müssen. Der Ablauf wird hier in dem Zustandsdiagramm in \autoref{fig:sd_training} dargestellt, da dieser Ablauf etwas komplexer ist. Es ist jedoch zu erwähnen, dass der Zustand sich ausschließlich im Frontend befindet, um der REST Architektur treu zu bleiben. Alle benötigten Zustandsinformationen werden mit jeder Anfrage an das Backend mitgegeben.
@@ -216,16 +217,16 @@ Der Übungsmodus verwendet ähnliche Endpunkte, wie der Lernmodus. Statt dem End
     \item Nachdem der Nutzer eine ausgewählt hat, muss er eine der Varianten auswählen, die über \lstinline|GET /openings/{id}/variants| zurückgegeben werden und entscheiden ob er die schwarzen Figuren oder die weißen spielen will. Bei Auswahl der weißen Figuren geht es mit Schritt 3 weiter, bei Auswahl der schwarzen mit Schritt 4.
     \item Für den nächsten Zug wird der Nutzer aufgefordert, ihn auszuführen. Das Frontend fragt daraufhin mit dem Endpunkt \lstinline|GET /openings/{id}/next-move| ab, was der richtige nächste Zug für diese Eröffnung ist. Wenn die Züge nicht übereinstimmen, wird er aufgefordert es erneut zu versuchen. An dieser Stelle kann auch die Hinweisfunktion implementiert werden. Wenn der Nutzer nach einem Hinweis fragt, kann das Frontend über den selben Endpunkt den richtigen Zug abfragen und einen Hinweis geben, zum Beispiel welche Figur bewegt werden muss. Dafür ist kein zusätzlicher Endpunkt in der API notwendig. Wenn der Nutzer den richtigen Zug gefunden hat und es noch weitere Züge gibt, geht es mit Schritt 4 weiter. Falls es keine weiteren Züge mehr gibt folgt der Schritt 5.
     \item Der nächste Zug wird vom Computer ausgeführt. Dafür holt sich das Frontend den Zug über den Endpunkt \lstinline|GET /openings/{id}/next-move| und führt ihn aus. Wenn das der letzte Zug war geht es mit Schritt 6 weiter, ansonsten ist der Nutzer wieder an der Reihe und es geht mit Schritt 4 weiter.
-    \item Nach dem letzten Zug wird ein TrainingResult angelegt mit der Anzahl an Fehlern und Hinweisen. \todo{Endpunkt}
+    \item Nach dem letzten Zug wird ein TrainingResult angelegt mit der Anzahl an Fehlern und Hinweisen, über den Endpunkt \lstinline|POST /stats/variants|.
 \end{enumerate}
 
-\begin{figure}
+\begin{figure}[h]
     \includegraphics[width=\linewidth]{images/diagrams/sd_training}
     \caption{Ablauf Trainingsmodus}
     \label{fig:sd_training}
 \end{figure}
 
-%todo fix figure placement
+\clearpage
 
 \section{Verteilungssicht (Deployment)}
 Um das Programm auf einem Server bereitzustellen werden die einzelnen Bestandteile in Docker Images eingebettet. Das hat vor allem den Vorteil, dass die Programme auf allen Plattformen, die Docker unterstützen, unkompliziert ausgeführt werden können. Die einzelnen Images können mittels Docker-Compose gestarten und verbunden werden. Diese Anwendung ist in drei Images aufgeteilt, die auch in \autoref{fig:deployment} zu sehen sind. Ein Image enthält das Frontend, eins die Rest-API und eins die Postgres Datenbank. Die Datei mit den Eröffnungen wird in das Image der Rest-API integriert und ist daher nicht auf dem Diagramm zu sehen. Das Frontend und die API ist durch einen Reverse Proxy über das Internet erreichbar. Das ermöglicht es, dass die Komponenten auch auf unterschiedlichen Servern ausgeführt werden können.
