@@ -21,12 +21,15 @@ Das Programm soll eine Webanwendung sein auf der Nutzer mit einer benutzerfreund
 \section{Patterns}
 In diesem Kapitel werden architekturübergreifende Patterns vorgestellt, die unabhängig vom gewählten Architekturstil eingesetzt werden können. Sie tragen dazu bei, den Code besser strukturiert, wartbar und erweiterbar zu gestalten. Dazu gehören das Repository Pattern und Dependency Injection. Beide Patterns werden im Folgenden anhand ihrer Funktion und ihres Einsatzes im Projekt erläutert.
 
+\subsection{Dependency Injection}
+Das Ziel von Dependency Injection ist es, Softwarekomponenten lose zu verbinden. Klassen sollen, anstatt selbst Objekte zu erstellen, beschreiben, welche Funktionalität sie benötigen. Diese Beschreibung findet über Interfaces (Schnittstellen) statt. Diese definieren, welche Funktionen benötigt werden. In der einfachsten Form, der puren Dependency Injection, werden die Objekte über den Konstruktor übergeben. Häufig wird allerdings ein Dependency Injection Container verwendet um die benötigten Objekte in eine Klasse zu \enquote{injizieren}.
+
+Das Verwenden von Dependency Injection bietet einige Vorteile. Zum einen ermöglicht es Late Binding, also das späte definieren von Verbindungen. So kann zum Beispiel über eine Konfigurationsdatei im Nachhinein geändert werden, welche Klasse für die Instanzierung einer bestimmten Abhängigkeit verwendet wird. Zum anderen erleichtert es auch die Erweiterung eines Programms. Erweiterungen können implementiert werden, indem einzelne Abhängigkeiten erweitert oder ersetzt werden, ohne dass sich das Interface verändert. Auch für Tests ist es dadurch einfach, die tatsächlichen Abhängigkeiten durch Testdoubles zu ersetzen und Klassen isoliert zu testen. Das ist vor allem für Unittests nützlich. Durch die Definierung von klaren Schnittstellen, ist auch die parallele Entwicklung an unterschiedlichen Modulen möglich. Wenn man sich zusätzlich an die Regel hält, dass jede Klasse nur einen hat soll, verbessert Dependency Injection auch die Wartbarkeit. Es ist dann oft möglich neue Features umzusetzen, indem vorhandene Klassen durch Einbindung neuer Klassen erweitert werden.
+\cite{seemann_dependency_2019}
+
 \subsection{Repository Pattern}
 Um die Datenspeicherung von dem Rest des Backends zu trennen wird das Repository Pattern angewendet. Bei diesem Pattern wird eine Repository-Klasse erstellt, welche die Abfragelogik enthält. Nach außen werden nur abstrakte domänenspezifische Funktionen exponiert, wie zum Beispiel \lstinline{GetUser(id: int): User} oder \lstinline{CreateUser(name: string, password: string)}. Die Implementierung dieser Klasse sorgt dann dafür, dass die entsprechenden Daten gefunden, aktualisiert oder hinzugefügt werden. Diese Abfragen können zum Beispiel komplexe SQL-Abfragen sein oder auch das Lesen einer Datei. In diesem Projekt wird jede Repository durch ein Interface definiert. Das ermöglicht es die jeweiligen Implementierungen mittels Dependency Injection zu ersetzen. \cite{evans_domain-driven_2004}
 \missingfigure{Beispieldiagramm}
-
-\subsection{Dependency Injection}
-\todo{TODO}
 
 \section{Architektur}
 Die Architektur ist in mehrere verschiedene Bestandteile aufgeteilt. Die zentrale Aufteilung besteht zwischen Backend und Frontend. In dieser Arbeit wird nur das Backend betrachtet. In \autoref{fig:components} ist ein Überblick über die Architektur zu sehen. Das Frontend greift auf eine \ac{REST}-API zu.
