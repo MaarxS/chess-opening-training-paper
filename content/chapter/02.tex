@@ -1,8 +1,8 @@
 %!TEX root = ../../main.tex
 
 \chapter{Theoretische Grundlagen}
-In den folgenden Kapiteln sollen die Theoretischen Grundlagen erläutert werden. Zunächst wird untersucht, wie das Lernen im Allgemeinen funktioniert und wie diese Erkenntnisse auf das Lernen von Eröffnungen angewendet werden können.
-Im anschließenden Kapitel wird auf die Erkenntnisse im Bereich der Schachpsychologie eingegangen. Dabei wird betrachtet, wie Schachspieler nach heutigem Wissensstand lernen und spielen.
+In den folgenden Kapiteln sollen die theoretischen Grundlagen erläutert werden. Zunächst wird untersucht, wie das Lernen im Allgemeinen funktioniert und wie diese Erkenntnisse auf das Lernen von Eröffnungen angewendet werden können. Danach wird gezeigt, wie die Lerntechnik Spaced Repetition beim Lernen helfen kann.
+Anschließend wird auf die Erkenntnisse im Bereich der Schachpsychologie eingegangen. Dabei wird betrachtet, wie Schachspieler nach heutigem Wissensstand lernen und spielen. Schließlich werden Schnittstellen in Computerprogrammen besprochen und welche Schnittstellen bei diesem Projekt nötig sind.
 
 \section{Allgemeines Lernen}
 Über das Thema Lernen gibt es mehrere Theorien und Modelle. Aus diesen Theorien können teilweise Schlüsse gezogen werden, wie das Erlernen von Schacheröffnungen gestaltet werden kann.
@@ -88,7 +88,7 @@ Bei dem Langzeitgedächtnis wird wieder zwischen deklarativem und prozeduralem W
 
 \begin{figure}[b]
     \centering
-    \includegraphics[height=6cm]{images/Chunk.png}
+    \includegraphics[height=5cm]{images/Chunk.png}
     \caption{Beispiel eines Chunks}
     \label{fig:chunk}
 \end{figure}
@@ -321,7 +321,7 @@ Passwörter sollten nicht bei jeder Anfrage geschickt werden, da jede Anfrage, i
 
 Für die genaue Verwendung von Tokens gibt es mehrere Möglichkeiten. Eine Möglichkeit ist das Token auf dem Server in einer Datenbank abzulegen, sodass dieser einen Client wiedererkennen kann. Um ein Token zu deaktivieren kann man es wieder aus der Datenbank entfernen. Auf dem Client kann man das Token in einem Cookie speichern und ihn auffordern das Token bei zukünftigen Anfragen zu verwenden. Die Technologie ist in den aktuellen Browsern gut unterstützt und daher auch leicht zu implementieren. Nachteilhaft bei diesem Vorgehen ist, dass der Server in diesem Fall Zustände speichern muss. Das wiederspricht dem Prinzip von REST-APIs, die per Definition zustandslos sein sollen. Die Überpüfung der Token mit einer Datenbank ist skaliert bei sehr vielen Nutzern auch nicht so gut und ist anfällig für Timing Attacken. Das bedeutet, dass ein Angreifer Token herausfinden kann anhand dessen, wie lange eine Anfrage benötigt.
 
-Das Problem der Timing Attacken kann gelöst werden, indem die Nachrichten durch einen \ac{MAC} ergänzt werden. Das Token erhält also zusätzlich einen Code, der bestätigt, dass er von dem Server erstellt wurde. Dafür kann die \ac{HMAC}-Funktion genutzt werden. Diese Funktion erstellt unter Verwendung der Daten und eines geheimen Schlüssels den \ac{MAC}. Er kann also nur erstellt werden, wenn man den Schlüssel kenn. Jede Veränderung der Daten führt zur Ungültigkeit des \ac{MAC}. Die Funktion kann nicht nur auf Tokens angewendet werden, sondern auf beliebige Daten. Im Endeffekt benötigt man auch keine Tokens mehr und die Informationen über die Berechtigungen können direkt an den Client übergeben werden, da sie vor Bearbeitung geschützt sind. Auf diese Weise funktionieren auch \ac{JWT}. Ein JSON-Objekt wird in Base64 umgewandelt und mithilfe einer \ac{HMAC}-Funktion signiert. Mit der selben Funktion kann bei späteren Anfragen getestet werden, ob die Daten unverändert sind. Wenn das der Fall ist muss der neu generierte \ac{MAC} mit dem vorhandenen übereinstimmen.
+Das Problem der Timing Attacken kann gelöst werden, indem die Nachrichten durch einen \ac{MAC} ergänzt werden. Das Token erhält also zusätzlich einen Code, der bestätigt, dass er von dem Server erstellt wurde. Dafür kann die \ac{HMAC}-Funktion genutzt werden. Diese Funktion erstellt unter Verwendung der Daten und eines geheimen Schlüssels den \ac{MAC}. Jede Veränderung der Daten führt zur Ungültigkeit des \ac{MAC}. Die Funktion kann nicht nur auf Tokens angewendet werden, sondern auf beliebige Daten. Im Endeffekt benötigt man auch keine Tokens mehr und die Informationen über die Berechtigungen können direkt an den Client übergeben werden, da sie vor Bearbeitung geschützt sind. Auf diese Weise funktionieren auch \ac{JWT}. Ein JSON-Objekt wird in Base64 umgewandelt und mithilfe einer \ac{HMAC}-Funktion signiert. Mit der selben Funktion kann bei späteren Anfragen getestet werden, ob die Daten unverändert sind. Wenn das der Fall ist muss der neu generierte \ac{MAC} mit dem vorhandenen übereinstimmen.
 \cite{madden_api_2020}\cite{software_development_engineering_advisor_at_fiserv_usa_architecting_2023}
 
 % Hier kann man noch mehr ins Detail gehen, wenn man will. Zum Biespiel Risiken und Nachteile mit JWTs.
