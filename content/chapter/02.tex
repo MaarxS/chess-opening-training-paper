@@ -79,17 +79,22 @@ In der Schachpsychologie wurde von unterschiedlichen Personen bereits einige gem
     \item Es gibt keinen Unterschied in dem Suchalgorithmus eines Expertenspielers und eines Großmeisters.
     \item Meister verlieren in simultanen Spielen relativ wenig ihrer Fähigkeiten.
 \end{enumerate}
-S
+
 \subsection{Die Template Theorie}
 Aufschluss über diese Beobachtungen soll die Template Theorie geben, welche von Gobet und Simon in \cite{gobet_templates_1996} beschrieben wird. Die Template Theorie berücksichtigt, dass das kognitive System der Menschen aus drei Hauptbestandteilen besteht, wie in \autoref{gedächtnis} beschrieben.
 Das sensoriesche Gedächtnis wird hier räumlich-zeitlicher Speicher genannt und es wird auch das stark begrenzte Kurzzeitgedächtnis und das Langzeitgedächtnis näher betrachtet.
 Bei dem Langzeitgedächtnis wird wieder zwischen deklarativem und prozeduralem Wissen unterschieden.
 \cite{gobet_training_2006}
 
-Bei dem deklarativen Wissen in Bezug auf Schach wird vermutet, dass Chunks eine große Rolle spielen. Das sind kleine Muster, also eine Anordnung von einigen Spielfiguren, die öfter bei einem Schachspiel vorkommen. Es wird geschätzt, dass das Kurzzeitgedächtnis Platz für ungefähr sieben Chunks hat. Ein großer Unterschied zwischen geübten und weniger geübten Schachspielern ist also, wie viele sie in ihrem Langzeitgedächtnis haben. Je besser ein Schachspieler ist, desto mehr und desto größere befinden sich in seinem Langzeitgedächtnis. Es wird vermutet, dass ein geübter Spieler ungefähr 50.000 in seinem Langzeitgedächtnis hat. Wenn ein Muster erkannt wird, muss im Kurzzeitgedächtnis nur ein Zeiger auf den Chunk im Langzeitgedächtnis behalten werden. Auf diese Weise können geübte Schachspieler sich sehr effizient Schachpositionen merken. Das erklärt auch, warum sich diese Fähigkeit nicht auf Bereiche außerhalb des Schachs auswirkt. Selbst zufällig angeordnete Positionen können sich gute Spieler schlecht merken. Erweitert wird diese Theorie durch Templates, also Vorlagen. Templates sind spezielle Chunks, welche Platzhalter für bestimmte Figuren beinhalten. Eine Template kann also auch angewendet werden, wenn sich vereinzelte Figuren an einer anderen Position befinden. So können durch Templates noch mehr Positionen abgedeckt werden, als es durch einfache Chunks möglich ist. Viele Chunks und Templates reduzieren die Notwendigkeit voraus zu schauen. Wenn bekannten Chunks begegnet wird, ist auch klar, wie gut diese Position zu bewerten ist und welche Züge in Frage kommen.
-\cite{gobet_templates_1996}
+\begin{figure}[b]
+    \centering
+    \includegraphics[height=6cm]{images/Chunk.png}
+    \caption{Beispiel eines Chunks}
+    \label{fig:chunk}
+\end{figure}
 
-\missingfigure{Bild von Chunk oder Template}
+Bei dem deklarativen Wissen in Bezug auf Schach wird vermutet, dass Chunks eine große Rolle spielen. Das sind kleine Muster, also eine Anordnung von einigen Spielfiguren, die öfter bei einem Schachspiel vorkommen. Ein Beispiel für einen Chunk könnte die Aufstellung in \autoref{fig:chunk} sein. Dort ist eine Position zu sehen, die oft nach einer Rochade zu sehen ist. Ein geübter Spieler erkennt dieses Muster sofort und weiß, dass diese Position relativ sicher ist. Es wird geschätzt, dass das Kurzzeitgedächtnis Platz für ungefähr sieben Chunks hat. Ein großer Unterschied zwischen geübten und weniger geübten Schachspielern ist also, wie viele sie in ihrem Langzeitgedächtnis haben. Je besser ein Schachspieler ist, desto mehr und desto größere befinden sich in seinem Langzeitgedächtnis. Es wird vermutet, dass ein geübter Spieler ungefähr 50.000 in seinem Langzeitgedächtnis hat. Wenn ein Muster erkannt wird, muss im Kurzzeitgedächtnis nur ein Zeiger auf den Chunk im Langzeitgedächtnis behalten werden. Auf diese Weise können geübte Schachspieler sich sehr effizient Schachpositionen merken. Das erklärt auch, warum sich diese Fähigkeit nicht auf Bereiche außerhalb des Schachs auswirkt. Selbst zufällig angeordnete Positionen können sich gute Spieler schlecht merken. Erweitert wird diese Theorie durch Templates, also Vorlagen. Templates sind spezielle Chunks, welche Platzhalter für bestimmte Figuren beinhalten. Eine Template kann also auch angewendet werden, wenn sich vereinzelte Figuren an einer anderen Position befinden. So können durch Templates noch mehr Positionen abgedeckt werden, als es durch einfache Chunks möglich ist. Viele Chunks und Templates reduzieren die Notwendigkeit voraus zu schauen. Wenn bekannten Chunks begegnet wird, ist auch klar, wie gut diese Position zu bewerten ist und welche Züge in Frage kommen.
+\cite{gobet_templates_1996}
 
 Dieses Wissen, was als nächstes getan werden kann, wird von Gobet und Jansen unter dem prozedurales Wissen eingeordnet. Es wird durch sogenannte Produktionen abgespeichert. Produktionen sind Wissenseinheiten, welche aus Bedingung und Aktion bestehen. Ein Beispiel wäre, \enquote{Wenn es eine Linie ohne Figuren gibt und du einen Turm besitzt, dann platziere den Turm auf dieser Reihe.} Durch diese Produktionen können Spieler schnell Entscheidungen treffen. Dieser Mechanismus kann bewusst oder unbewusst stattfinden und wird oft als Intuition verstanden.
 \cite{gobet_training_2006}
@@ -142,7 +147,7 @@ Beide Herangehensweisen sind equivalent. Wenn $p$ eine Position ist, bei der es 
 \end{equation}
 
 Mit Pseudocode kann diese Funktion folgendermaßen abgebildet werden:
-\begin{lstlisting}
+\begin{lstlisting}[caption=Minimax-Algorithmus,label=lst:minmax]
 function F(p: Position): Int {
     ps = findSuccessors(p)
     d = ps.length
@@ -166,8 +171,6 @@ Wenn man zum Beispiel eine Zugfolge herausgefunden hat, die mit dem Wert 3 bewer
 Der Gegner kann in diesem Fall den Zug so wählen, dass entweder derselbe Wert oder ein für uns kleinerer Wert erzielt wird. Indem man den aktuell höchsten Wert zwischenspeichert, ist es möglich bestimmte Suchzweige auszulassen.
 \cite{knuth_analysis_1975}
 
-\missingfigure{Beispiel}
-
 Dieses Vorgehen kann weiter verbessert werden indem man den höchsten und den kleinsten Wert zwischenspeichert. Dieses Vorgehen wird Alpha-Beta-Pruning genannt. Knuth und Moore definieren die Funktion folgendermaßen:
 
 \begin{equation}
@@ -179,7 +182,7 @@ Dieses Vorgehen kann weiter verbessert werden indem man den höchsten und den kl
 \end{equation}
 
 In Pseudocode kann der Algorithmus folgendermaßen umgesetzt werden:
-\begin{lstlisting}
+\begin{lstlisting}[caption=Alpha-Beta-Pruning,label=alphabeta]
 function F2(p: Position, alpha: Int, beta: Int): Int {
     ps = findSuccessors(p)
     d = ps.length
@@ -196,8 +199,6 @@ function F2(p: Position, alpha: Int, beta: Int): Int {
 }
 \end{lstlisting}
 \cite{knuth_analysis_1975}
-
-\missingfigure{Beispiel}
 
 Für diesen Algorithmus können weitere Verbesserungen vorgenommen werden. Einen großen Faktor spielt die Reihenfolge, in der die Züge untersucht werden. Bei einer optimalen Reihenfolge muss der Alpha-Beta-Algorithmus $d^{\lceil h/2 \rceil} + d^{\lfloor h/2 \rfloor} - 1$ Terminalpositionen bewerten. \cite{knuth_analysis_1975} Das ist dann der Fall, wenn beim Durchsuchen des Baumes immer der richtige Zug ausgewählt wird, sodass er maximal gekürzt werden kann. Der Algorithmus kann dahingehend verbessert werden, dass Züge, die mit hoher Wahrscheinlichkeit einen Vorteil bringen zuerst betrachtet werden. Im Schach können zum Beispiel Züge in welchen eine Figur geschlagen wird zuerst betrachtet werden, da diese oft einen Vorteil bringen. Andere Züge, wie zum Beispiel Damenopfer können später betrachtet werden.
 Um die Reihenfolge der Züge für eine tiefere Suche zu verbessern, wird häufig zunächst eine flachere Suche durchgeführt. Dieses Verfahren wird als iterative Vertiefung (iterative deepening) bezeichnet. 
