@@ -184,7 +184,7 @@ Mit den aktuellen Werten muss $\Delta$ in Tagen angegeben werden. In \autoref{fi
 \end{figure}
 
 \subsection{Schachengine}
-\todo{TODO}
+Eine Schachengine mit \ac{UCI}-Protokoll kann eingebunden werden, indem ein Adapter geschrieben wird, der \ac{REST}-Anfragen für die Engine übersetzt. Das wird dadruch ermöglicht, dass REST und UCI keinen Zustand besitzen. Über einen Endpunkt, wie zum Beispiel \lstinline|GET /engine| könnte ein Computerzug angefragt werden. Über Query-Parameter played und level müsste das Frontend die bisher gespielten Züge übertragen und die Stärke der Engine. Aus Zeitgründen wurde im finalen Programm keine Schachengine eingebunden.
 
 \section{Laufzeitsicht}
 
