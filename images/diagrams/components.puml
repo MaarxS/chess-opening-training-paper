@@ -1,4 +1,9 @@
 @startuml
+<style>
+element {
+    FontName Arial
+}
+</style>
 [Frontend]
 package "REST-API" as API {
   [Eroeffnungen]

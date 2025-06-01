@@ -1,12 +1,17 @@
 @startuml
+<style>
+element {
+    FontName Arial
+}
+</style>
 class UserParams {
-    + name: string
-    + password: string
+    + Name: string
+    + Password: string
 }
 class User {
-    + id: int
-    + name: string
-    + passwordHash: string
+    + Id: int
+    + Name: string
+    + PasswordHash: string
 }
 class UserController {
     + CreateUser(newUser: UserParams)

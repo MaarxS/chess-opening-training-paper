@@ -1,4 +1,9 @@
 @startuml
+<style>
+element {
+    FontName Arial
+}
+</style>
 [*] --> Eröffnungswahl
 Eröffnungswahl: entry / GET /openings
 Eröffnungswahl: do / Zeige Eröffnungen

@@ -1,3 +1,18 @@
+
+## Eigene Hinweise
+plantuml `.puml` Dateien exportieren
+```
+plantuml "-teps:text" images/diagrams
+```
+eps Datei einbinden
+```
+\includegraphics{path/without/extension}
+```
+continous compilation mit eps Dateien
+```
+latexmk -pdf -pvc --shell-escape
+```
+
 Wie Benutzt Man Diese Vorlage?
 ==========================
 

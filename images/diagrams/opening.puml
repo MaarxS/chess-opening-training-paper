@@ -1,29 +1,34 @@
 @startuml
+<style>
+element {
+    FontName Arial
+}
+</style>
 class OpeningOverview {
-    + id: string,
-    + name: string
+    + Id: string,
+    + Name: string
 }
 class OpeningMove {
-    + name: string,
-    + move: string
+    + Name: string,
+    + Move: string
 }
 class Opening {
-    + id: string
-    + name: string
-    + moves: string
+    + Id: string
+    + Name: string
+    + Moves: string
     + IsRoot(): bool
     + IsInFamily(familyName: string): bool
-    + NextMove(previousMoves: string): String
+    + NextMove(previousMoves: string): string
 }
 class OpeningController {
     + GetOpenings(): [OpeningOverview]
     + GetVariants(id: string): [OpeningOverview]
     + GetMoveVariants(id: string, played: string): [OpeningMove]
-    + GetNextMove(id: string, played): OpeningMove
+    + GetNextMove(id: string, played: string): OpeningMove
 }
 interface IOpeningRepository {
-    + GetOpenings(): [Opening]
-    + GetOpening(id: string): Opening
+    + GetRootOpenings(): [Opening]
+    + GetOpening(id: string): Opening?
     + GetVariants(id: string): [Opening]
     + GetOpeningsWithPlayedMoves(id: string, played: string): [Opening]
 }

@@ -1,4 +1,9 @@
 @startuml
+<style>
+element {
+    FontName Arial
+}
+</style>
 agent "Reverse Proxy (nginx)" as proxy
 node Frontend
 node "Rest-API" as API
@@ -8,6 +13,6 @@ proxy --> Frontend
 proxy --> API
 Frontend -> API
 
-API -> Postgres
+API --> Postgres
 
 @enduml
